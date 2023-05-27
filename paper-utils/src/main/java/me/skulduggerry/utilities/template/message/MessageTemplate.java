@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Skulduggerry
  * @since 0.1.0
  */
+@FunctionalInterface
 public interface MessageTemplate {
 
     /**

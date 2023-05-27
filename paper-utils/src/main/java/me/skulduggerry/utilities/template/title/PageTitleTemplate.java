@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Range;
  * @author Skulduggerry
  * @since 0.1.0
  */
+@FunctionalInterface
 public interface PageTitleTemplate {
 
     /**
