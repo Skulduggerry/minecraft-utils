@@ -3,12 +3,14 @@ package me.skulduggerry.utilities.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Repeatable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper class for reflection
@@ -82,7 +84,7 @@ public class ReflectionUtils {
      * @return The constructor wrapped in an optional
      */
     @NotNull
-    public static <T> Optional<Constructor<T>> getConstructor(@NotNull Class<T> type, @NotNull Class<?>... parameterTypes) {
+    public static <T> Optional<Constructor<T>> getConstructor(@NotNull Class<T> type, @NotNull Class<?> @NotNull ... parameterTypes) {
         try {
             Constructor<T> constructor = type.getDeclaredConstructor(parameterTypes);
             return Optional.of(constructor);
@@ -100,7 +102,7 @@ public class ReflectionUtils {
      * @return The new instance wrapped into an optional.
      */
     @NotNull
-    public static <T> Optional<T> createNewInstance(@NotNull Class<T> type, @NotNull Object... parameters) {
+    public static <T> Optional<T> createNewInstance(@NotNull Class<T> type, @NotNull Object @NotNull ... parameters) {
         Optional<Constructor<T>> constructorOptional = getConstructor(type, getClasses(parameters));
         if (constructorOptional.isEmpty()) return Optional.empty();
 
@@ -137,7 +139,7 @@ public class ReflectionUtils {
      * @return The method wrapped in an optional
      */
     @NotNull
-    public static Optional<Method> getMethod(@NotNull String name, @NotNull Object instance, @NotNull Object... parameters) {
+    public static Optional<Method> getMethod(@NotNull String name, @NotNull Object instance, @NotNull Object @NotNull ... parameters) {
         Class<?> type = instance.getClass();
         Class<?>[] parameterTypes = getClasses(parameters);
         return getMethod(name, type, parameterTypes);
@@ -152,7 +154,7 @@ public class ReflectionUtils {
      * @return The method wrapped in an optional
      */
     @NotNull
-    public static Optional<Method> getMethod(@NotNull String name, @NotNull Class<?> type, @NotNull Class<?>... parameters) {
+    public static Optional<Method> getMethod(@NotNull String name, @NotNull Class<?> type, @NotNull Class<?> @NotNull ... parameters) {
         try {
             return Optional.of(type.getMethod(name, parameters));
         } catch (NoSuchMethodException ignored) {/**/}
@@ -241,7 +243,7 @@ public class ReflectionUtils {
      * @return The array of classes.
      */
     @NotNull
-    public static Class<?>[] getClasses(@NotNull Object... args) {
+    public static Class<?>[] getClasses(@NotNull Object @NotNull ... args) {
         return Arrays.stream(args)
                 .map(Object::getClass)
                 .toArray(Class[]::new);

@@ -128,7 +128,7 @@ public final class FileUtils {
      *                                       <i>(optional specific exception)</i>
      * @see Files#write(Path, Iterable, Charset, OpenOption[])
      */
-    public static BufferedWriter newBufferedWriter(Path path, Charset charset, OpenOption... options) throws IOException {
+    public static BufferedWriter newBufferedWriter(Path path, Charset charset, @NotNull OpenOption... options) throws IOException {
         return Files.newBufferedWriter(path, charset, options);
     }
 
