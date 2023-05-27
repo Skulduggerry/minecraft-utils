@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>common-utils</module>
+        <module>paper-utils</module>
     </modules>
 
     <properties>
