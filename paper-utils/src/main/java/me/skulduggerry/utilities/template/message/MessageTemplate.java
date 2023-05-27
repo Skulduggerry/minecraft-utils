@@ -5,6 +5,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,12 +21,13 @@ public interface MessageTemplate {
 
     /**
      * Get a message template which gives the same message for every receiver.
+     * Allows color codes with legacy '§'-format.
      *
      * @param message The message.
      * @return The template.
      */
     static MessageTemplate of(@NotNull String message) {
-        return (receiver, args) -> Component.text(message);
+        return (receiver, args) -> LegacyComponentSerializer.legacySection().deserialize(message);
     }
 
     /**
@@ -49,7 +51,7 @@ public interface MessageTemplate {
             return;
         }
 
-        TextComponent message = getMessage(receiver);
+        TextComponent message = getMessage(receiver, args);
         receiver.sendMessage(message);
     }
 
