@@ -46,6 +46,7 @@ public interface MessageTemplate {
     default void send(@NotNull Audience receiver, Object @NotNull ... args) {
         if (receiver instanceof ForwardingAudience forwardingAudience) {
             receiver.forEachAudience(audience -> send(audience, args));
+            return;
         }
 
         TextComponent message = getMessage(receiver);
