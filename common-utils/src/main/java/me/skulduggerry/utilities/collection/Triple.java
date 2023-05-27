@@ -16,21 +16,21 @@ import java.util.function.Function;
  */
 public final class Triple<T, U, V> {
 
-    public final T t;
-    public final U u;
-    public final V v;
+    public final T first;
+    public final U second;
+    public final V third;
 
     /**
      * Constructor.
      *
-     * @param t The first value.
-     * @param u The second value.
-     * @param v The third value.
+     * @param first  The first value.
+     * @param second The second value.
+     * @param third  The third value.
      */
-    public Triple(@NotNull T t, @NotNull U u, @NotNull V v) {
-        this.t = t;
-        this.u = u;
-        this.v = v;
+    public Triple(@NotNull T first, @NotNull U second, @NotNull V third) {
+        this.first = first;
+        this.second = second;
+        this.third = third;
     }
 
     /**
@@ -107,7 +107,7 @@ public final class Triple<T, U, V> {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         Triple<?, ?, ?> triple = (Triple<?, ?, ?>) other;
-        return Objects.equals(t, triple.t) && Objects.equals(u, triple.u) && Objects.equals(v, triple.v);
+        return Objects.equals(first, triple.first) && Objects.equals(second, triple.second) && Objects.equals(third, triple.third);
     }
 
     /**
@@ -143,7 +143,7 @@ public final class Triple<T, U, V> {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(t, u, v);
+        return Objects.hash(first, second, third);
     }
 
     /**
@@ -172,9 +172,9 @@ public final class Triple<T, U, V> {
     @Override
     public String toString() {
         return "Triple{" +
-                "t=" + t +
-                ", u=" + u +
-                ", v=" + v +
+                "t=" + first +
+                ", u=" + second +
+                ", v=" + third +
                 '}';
     }
 
@@ -194,9 +194,9 @@ public final class Triple<T, U, V> {
                                          @NotNull Function<? super U, ? extends B> secondMapper,
                                          @NotNull Function<? super V, ? extends C> thirdMapper) {
         return makeTriple(
-                firstMapper.apply(t),
-                secondMapper.apply(u),
-                thirdMapper.apply(v)
+                firstMapper.apply(first),
+                secondMapper.apply(second),
+                thirdMapper.apply(third)
         );
     }
 
@@ -210,9 +210,9 @@ public final class Triple<T, U, V> {
     @NotNull
     public <A> Triple<A, U, V> mapFirst(Function<? super T, ? extends A> mapper) {
         return makeTriple(
-                mapper.apply(t),
-                u,
-                v
+                mapper.apply(first),
+                second,
+                third
         );
     }
 
@@ -226,9 +226,9 @@ public final class Triple<T, U, V> {
     @NotNull
     public <B> Triple<T, B, V> mapSecond(@NotNull Function<? super U, ? extends B> mapper) {
         return makeTriple(
-                t,
-                mapper.apply(u),
-                v
+                first,
+                mapper.apply(second),
+                third
         );
     }
 
@@ -242,9 +242,9 @@ public final class Triple<T, U, V> {
     @NotNull
     public <C> Triple<T, U, C> mapThird(@NotNull Function<? super V, ? extends C> mapper) {
         return makeTriple(
-                t,
-                u,
-                mapper.apply(v)
+                first,
+                second,
+                mapper.apply(third)
         );
     }
 }

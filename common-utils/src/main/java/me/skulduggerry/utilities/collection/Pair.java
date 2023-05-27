@@ -2,7 +2,7 @@ package me.skulduggerry.utilities.collection;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -15,19 +15,19 @@ import java.util.function.Function;
  */
 public final class Pair<T, U> {
 
-    public final T t;
+    public final T first;
 
-    public final U u;
+    public final U second;
 
     /**
      * Constructor
      *
-     * @param t The first parameter of the pair.
-     * @param u The second parameter of the pair.
+     * @param first  The first parameter of the pair.
+     * @param second The second parameter of the pair.
      */
-    public Pair(@NotNull T t, @NotNull U u) {
-        this.t = t;
-        this.u = u;
+    public Pair(@NotNull T first, @NotNull U second) {
+        this.first = first;
+        this.second = second;
     }
 
     /**
@@ -103,7 +103,7 @@ public final class Pair<T, U> {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         Pair<?, ?> pair = (Pair<?, ?>) other;
-        return Objects.equals(t, pair.t) && Objects.equals(u, pair.u);
+        return Objects.equals(first, pair.first) && Objects.equals(second, pair.second);
     }
 
     /**
@@ -139,7 +139,7 @@ public final class Pair<T, U> {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(t, u);
+        return Objects.hash(first, second);
     }
 
     /**
@@ -169,8 +169,8 @@ public final class Pair<T, U> {
     @NotNull
     public String toString() {
         return "Pair{" +
-                "t=" + t +
-                ", u=" + u +
+                "t=" + first +
+                ", u=" + second +
                 '}';
     }
 
@@ -186,8 +186,8 @@ public final class Pair<T, U> {
     @NotNull
     public <A, B> Pair<A, B> map(@NotNull Function<? super T, ? extends A> firstMapper, @NotNull Function<? super U, ? extends B> secondMapper) {
         return makePair(
-                firstMapper.apply(t),
-                secondMapper.apply(u)
+                firstMapper.apply(first),
+                secondMapper.apply(second)
         );
     }
 
@@ -201,8 +201,8 @@ public final class Pair<T, U> {
     @NotNull
     public <A> Pair<A, U> mapFirst(Function<? super T, ? extends A> mapper) {
         return makePair(
-                mapper.apply(t),
-                u
+                mapper.apply(first),
+                second
         );
     }
 
@@ -216,8 +216,40 @@ public final class Pair<T, U> {
     @NotNull
     public <B> Pair<T, B> mapSecond(@NotNull Function<? super U, ? extends B> mapper) {
         return makePair(
-                t,
-                mapper.apply(u)
+                first,
+                mapper.apply(second)
         );
+    }
+
+    /**
+     * Converts a map to a collection of pairs.
+     *
+     * @param map The map.
+     * @param <T> The type of the key.
+     * @param <U> The type of the value.
+     * @return The collection of pairs.
+     */
+    public static <T, U> Collection<Pair<T, U>> fromMap(@NotNull Map<T, U> map) {
+        return map.entrySet()
+                .stream()
+                .map(entry -> makePair(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    /**
+     * Converts a collection of pairs to a map.
+     *
+     * @param pairs The pairs.
+     * @param <T>   The type of the key.
+     * @param <U>   The type of the value.
+     * @return The map.
+     */
+    public static <T, U> Map<T, U> toMap(@NotNull Collection<Pair<T, U>> pairs) {
+        Map<T, U> map = new HashMap<>();
+        for (Pair<T, U> pair : pairs) {
+            map.put(pair.first, pair.second);
+        }
+
+        return map;
     }
 }
