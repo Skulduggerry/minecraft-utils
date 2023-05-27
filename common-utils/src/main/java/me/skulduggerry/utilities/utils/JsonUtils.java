@@ -22,7 +22,7 @@ public class JsonUtils {
     }
 
     /**
-     * Tries to make a json element to an object that fits.
+     * Tries to convert a json element to an object.
      *
      * @param element The element
      * @return The unpacked object
@@ -40,6 +40,19 @@ public class JsonUtils {
             if (primitive.isString()) return primitive.getAsString();
         }
         return element;
+    }
+
+    /**
+     * Tries to convert a json element to of the given class
+     *
+     * @param gson    The gson to convert into not out-of-the-box supported class
+     * @param element The element
+     * @param type    The type of the result object
+     * @return The unpacked object.
+     */
+    @Nullable
+    public static Object unpackJson(@NotNull Gson gson, @Nullable JsonElement element, Class<?> type) {
+        return gson.fromJson(element, type);
     }
 
     /**
