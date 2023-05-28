@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Skulduggerry
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package me.skulduggerry.utilities.version;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +39,20 @@ public class Version implements Comparable<Version> {
 
     private final int major, minor, revision;
 
+    /**
+     * Constructor. Creates a version 1.0.0
+     */
     public Version() {
         this(1, 0, 0);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param major    Major version
+     * @param minor    Minor version
+     * @param revision Revision.
+     */
     public Version(@Range(from = 0L, to = Integer.MAX_VALUE) int major, @Range(from = 0L, to = Integer.MAX_VALUE) int minor, @Range(from = 0L, to = Integer.MAX_VALUE) int revision) {
         this.major = major;
         this.minor = minor;
@@ -90,34 +124,30 @@ public class Version implements Comparable<Version> {
      * equivalence class are substitutable for each other, at least
      * for some purposes.
      *
-     * @implSpec
-     * The {@code equals} method for class {@code Object} implements
+     * @param other the reference object with which to compare.
+     * @return {@code true} if this object is the same as the obj
+     * argument; {@code false} otherwise.
+     * @implSpec The {@code equals} method for class {@code Object} implements
      * the most discriminating possible equivalence relation on objects;
      * that is, for any non-null reference values {@code x} and
      * {@code y}, this method returns {@code true} if and only
      * if {@code x} and {@code y} refer to the same object
      * ({@code x == y} has the value {@code true}).
-     *
+     * <p>
      * In other words, under the reference equality equivalence
      * relation, each equivalence class only has a single element.
-     *
-     * @apiNote
-     * It is generally necessary to override the {@link hashCode hashCode}
+     * @apiNote It is generally necessary to override the {@link Version#hashCode hashCode}
      * method whenever this method is overridden, so as to maintain the
      * general contract for the {@code hashCode} method, which states
      * that equal objects must have equal hash codes.
-     *
-     * @param   obj   the reference object with which to compare.
-     * @return  {@code true} if this object is the same as the obj
-     *          argument; {@code false} otherwise.
-     * @see     #hashCode()
-     * @see     java.util.HashMap
+     * @see #hashCode()
+     * @see java.util.HashMap
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Version version = (Version) o;
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        Version version = (Version) other;
         return major == version.major && minor == version.minor && revision == version.revision;
     }
 
@@ -135,24 +165,22 @@ public class Version implements Comparable<Version> {
      *     This integer need not remain consistent from one execution of an
      *     application to another execution of the same application.
      * <li>If two objects are equal according to the {@link
-     *     equals(Object) equals} method, then calling the {@code
+     *     Version#equals(Object) equals} method, then calling the {@code
      *     hashCode} method on each of the two objects must produce the
      *     same integer result.
      * <li>It is <em>not</em> required that if two objects are unequal
-     *     according to the {@link equals(Object) equals} method, then
+     *     according to the {@link Version#equals(Object) equals} method, then
      *     calling the {@code hashCode} method on each of the two objects
      *     must produce distinct integer results.  However, the programmer
      *     should be aware that producing distinct integer results for
      *     unequal objects may improve the performance of hash tables.
      * </ul>
      *
-     * @implSpec
-     * As far as is reasonably practical, the {@code hashCode} method defined
+     * @return a hash code value for this object.
+     * @implSpec As far as is reasonably practical, the {@code hashCode} method defined
      * by class {@code Object} returns distinct integers for distinct objects.
-     *
-     * @return  a hash code value for this object.
-     * @see     java.lang.Object#equals(java.lang.Object)
-     * @see     java.lang.System#identityHashCode
+     * @see java.lang.Object#equals(java.lang.Object)
+     * @see java.lang.System#identityHashCode
      */
     @Override
     public int hashCode() {
@@ -161,8 +189,9 @@ public class Version implements Comparable<Version> {
 
     /**
      * Returns a string representation of the object.
-     * @apiNote
-     * In general, the
+     *
+     * @return a string representation of the object.
+     * @apiNote In general, the
      * {@code toString} method returns a string that
      * "textually represents" this object. The result should
      * be a concise but informative representation that is easy for a
@@ -170,8 +199,7 @@ public class Version implements Comparable<Version> {
      * It is recommended that all subclasses override this method.
      * The string output is not necessarily stable over time or across
      * JVM invocations.
-     * @implSpec
-     * The {@code toString} method for class {@code Object}
+     * @implSpec The {@code toString} method for class {@code Object}
      * returns a string consisting of the name of the class of which the
      * object is an instance, the at-sign character `{@code @}', and
      * the unsigned hexadecimal representation of the hash code of the
@@ -181,8 +209,6 @@ public class Version implements Comparable<Version> {
      * <pre>
      * getClass().getName() + '@' + Integer.toHexString(hashCode())
      * </pre></blockquote>
-     *
-     * @return  a string representation of the object.
      */
     @Override
     public String toString() {

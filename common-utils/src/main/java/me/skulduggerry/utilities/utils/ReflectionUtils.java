@@ -1,14 +1,40 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Skulduggerry
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package me.skulduggerry.utilities.utils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Repeatable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper class for reflection
@@ -82,7 +108,7 @@ public class ReflectionUtils {
      * @return The constructor wrapped in an optional
      */
     @NotNull
-    public static <T> Optional<Constructor<T>> getConstructor(@NotNull Class<T> type, @NotNull Class<?>... parameterTypes) {
+    public static <T> Optional<Constructor<T>> getConstructor(@NotNull Class<T> type, @NotNull Class<?> @NotNull ... parameterTypes) {
         try {
             Constructor<T> constructor = type.getDeclaredConstructor(parameterTypes);
             return Optional.of(constructor);
@@ -100,7 +126,7 @@ public class ReflectionUtils {
      * @return The new instance wrapped into an optional.
      */
     @NotNull
-    public static <T> Optional<T> createNewInstance(@NotNull Class<T> type, @NotNull Object... parameters) {
+    public static <T> Optional<T> createNewInstance(@NotNull Class<T> type, @NotNull Object @NotNull ... parameters) {
         Optional<Constructor<T>> constructorOptional = getConstructor(type, getClasses(parameters));
         if (constructorOptional.isEmpty()) return Optional.empty();
 
@@ -137,7 +163,7 @@ public class ReflectionUtils {
      * @return The method wrapped in an optional
      */
     @NotNull
-    public static Optional<Method> getMethod(@NotNull String name, @NotNull Object instance, @NotNull Object... parameters) {
+    public static Optional<Method> getMethod(@NotNull String name, @NotNull Object instance, @NotNull Object @NotNull ... parameters) {
         Class<?> type = instance.getClass();
         Class<?>[] parameterTypes = getClasses(parameters);
         return getMethod(name, type, parameterTypes);
@@ -152,7 +178,7 @@ public class ReflectionUtils {
      * @return The method wrapped in an optional
      */
     @NotNull
-    public static Optional<Method> getMethod(@NotNull String name, @NotNull Class<?> type, @NotNull Class<?>... parameters) {
+    public static Optional<Method> getMethod(@NotNull String name, @NotNull Class<?> type, @NotNull Class<?> @NotNull ... parameters) {
         try {
             return Optional.of(type.getMethod(name, parameters));
         } catch (NoSuchMethodException ignored) {/**/}
@@ -162,6 +188,20 @@ public class ReflectionUtils {
         } catch (NoSuchMethodException ignored) {/**/}
 
         return Optional.empty();
+    }
+
+    /**
+     * Checks if the given executable has any parameters.
+     *
+     * @param executable The executable
+     * @return The result.
+     */
+    public static boolean hasParameters(@NotNull Executable executable) {
+        return executable.getParameters().length != 0;
+    }
+
+    public static boolean matchingParameters(@NotNull Executable executable, @NotNull Class<?> @NotNull ... expectedParameters) {
+        return Arrays.equals(executable.getParameterTypes(), expectedParameters);
     }
 
     /**
@@ -241,7 +281,7 @@ public class ReflectionUtils {
      * @return The array of classes.
      */
     @NotNull
-    public static Class<?>[] getClasses(@NotNull Object... args) {
+    public static Class<?>[] getClasses(@NotNull Object @NotNull ... args) {
         return Arrays.stream(args)
                 .map(Object::getClass)
                 .toArray(Class[]::new);
