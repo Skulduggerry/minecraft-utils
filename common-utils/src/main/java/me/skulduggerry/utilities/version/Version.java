@@ -15,10 +15,20 @@ public class Version implements Comparable<Version> {
 
     private final int major, minor, revision;
 
+    /**
+     * Constructor. Creates a version 1.0.0
+     */
     public Version() {
         this(1, 0, 0);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param major    Major version
+     * @param minor    Minor version
+     * @param revision Revision.
+     */
     public Version(@Range(from = 0L, to = Integer.MAX_VALUE) int major, @Range(from = 0L, to = Integer.MAX_VALUE) int minor, @Range(from = 0L, to = Integer.MAX_VALUE) int revision) {
         this.major = major;
         this.minor = minor;
