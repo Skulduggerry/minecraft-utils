@@ -28,6 +28,8 @@ import me.skulduggerry.utilities.builder.ItemBuilder;
 import me.skulduggerry.utilities.menu.mask.Mask;
 import me.skulduggerry.utilities.menu.mask.AbstractMask;
 import me.skulduggerry.utilities.template.item.ItemTemplate;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
@@ -70,9 +72,9 @@ public class BinaryMask extends AbstractMask {
      */
     public static class Builder extends AbstractMask.Builder<Builder> {
 
-        public static final ItemTemplate DEFAULT_ZERO = ItemTemplate.of(new ItemBuilder<>(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("§a").addItemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
+        public static final ItemTemplate DEFAULT_ZERO = ItemTemplate.of(new ItemBuilder<>(Material.WHITE_STAINED_GLASS_PANE).setDisplayName(Component.empty()).addItemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
 
-        public static final ItemTemplate DEFAULT_ONE = ItemTemplate.of(new ItemBuilder<>(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("§a").addItemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
+        public static final ItemTemplate DEFAULT_ONE = ItemTemplate.of(new ItemBuilder<>(Material.BLACK_STAINED_GLASS_PANE).setDisplayName(Component.empty()).addItemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
 
         private ItemTemplate zero = DEFAULT_ZERO;
         private ItemTemplate one = DEFAULT_ONE;
