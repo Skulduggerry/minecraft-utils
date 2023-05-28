@@ -1,7 +1,6 @@
 package me.skulduggerry.utilities.template.title;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
@@ -47,5 +46,5 @@ public interface PageTitleTemplate {
      * @param receiver The player.
      * @return The message.
      */
-    TextComponent getTitle(@NotNull Player receiver, @Range(from = 1, to = Integer.MAX_VALUE) int page);
+    Component getTitle(@NotNull Player receiver, @Range(from = 1, to = Integer.MAX_VALUE) int page);
 }

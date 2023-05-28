@@ -38,7 +38,7 @@ public interface MessageTemplate {
      * @param args     Format arguments.
      * @return The message.
      */
-    TextComponent getMessage(@NotNull Audience receiver, Object @NotNull ... args);
+    Component getMessage(@NotNull Audience receiver, Object @NotNull ... args);
 
     /**
      * Send the message to the given receiver.
@@ -52,7 +52,7 @@ public interface MessageTemplate {
             return;
         }
 
-        TextComponent message = getMessage(receiver, args);
+        Component message = getMessage(receiver, args);
         receiver.sendMessage(message);
     }
 
@@ -95,8 +95,8 @@ public interface MessageTemplate {
             return;
         }
 
-        TextComponent titleText = getMessage(receiver, args);
-        TextComponent subTitleText = subTitle != null ? subTitle.getMessage(receiver, subTitleArgs) : Component.empty();
+        Component titleText = getMessage(receiver, args);
+        Component subTitleText = subTitle != null ? subTitle.getMessage(receiver, subTitleArgs) : Component.empty();
         Title title = Title.title(titleText, subTitleText, times);
         receiver.showTitle(title);
     }
@@ -115,7 +115,7 @@ public interface MessageTemplate {
             return;
         }
 
-        TextComponent text = getMessage(receiver, args);
+        Component text = getMessage(receiver, args);
         receiver.sendActionBar(text);
     }
 
