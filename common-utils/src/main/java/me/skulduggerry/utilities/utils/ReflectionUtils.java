@@ -167,6 +167,20 @@ public class ReflectionUtils {
     }
 
     /**
+     * Checks if the given executable has any parameters.
+     *
+     * @param executable The executable
+     * @return The result.
+     */
+    public static boolean hasParameters(@NotNull Executable executable) {
+        return executable.getParameters().length != 0;
+    }
+
+    public static boolean matchingParameters(@NotNull Executable executable, @NotNull Class<?> @NotNull ... expectedParameters) {
+        return Arrays.equals(executable.getParameterTypes(), expectedParameters);
+    }
+
+    /**
      * Returns true if an annotation for the specified type
      * is <em>present</em> on this element, else false.  This method
      * is designed primarily for convenient access to marker annotations.
