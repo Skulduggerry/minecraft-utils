@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -134,6 +135,10 @@ public class SimpleConfigManager implements ConfigManager {
      */
     @Override
     public void handleDisable() {
-        saveAll();
+        try {
+            saveAll();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
