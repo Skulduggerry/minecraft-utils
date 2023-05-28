@@ -217,7 +217,7 @@ public class ReflectionUtils {
      * @return true if an annotation for the specified annotation type is present on this element, else false
      * @throws NullPointerException if the given annotation class is null
      */
-    public static boolean hasAnnotation(@NotNull AnnotatedElement element, Class<? extends Annotation> annotationType) {
+    public static boolean hasAnnotation(@NotNull AnnotatedElement element, @NotNull Class<? extends Annotation> annotationType) {
         return element.isAnnotationPresent(annotationType);
     }
 

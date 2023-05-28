@@ -49,7 +49,7 @@ public class GlobalBar extends Bar {
      * @param title    Title of the bar
      * @param progress Progress of the bar
      */
-    private GlobalBar(@NotNull BarSettings settings, @NotNull Component title, float progress) {
+    private GlobalBar(@NotNull BarSettings settings, @NotNull Component title, @Range(from = 0, to = 1) float progress) {
         super(settings);
         this.title = title;
         this.progress = progress;
@@ -100,7 +100,7 @@ public class GlobalBar extends Bar {
      * @return The current title
      */
     @NotNull
-    public Component getTitle() {
+    public Component title() {
         return title;
     }
 

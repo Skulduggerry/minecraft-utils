@@ -120,7 +120,7 @@ public final class FileUtils {
      * @throws IOException if an I/O error occurs opening the file
      * @see Files#readAllLines
      */
-    public static BufferedWriter newBufferedWriter(Path path, OpenOption... options) throws IOException {
+    public static BufferedWriter newBufferedWriter(@NotNull Path path, @NotNull OpenOption... options) throws IOException {
         return Files.newBufferedWriter(path, options);
     }
 
@@ -152,7 +152,7 @@ public final class FileUtils {
      *                                       <i>(optional specific exception)</i>
      * @see Files#write(Path, Iterable, Charset, OpenOption[])
      */
-    public static BufferedWriter newBufferedWriter(Path path, Charset charset, @NotNull OpenOption... options) throws IOException {
+    public static BufferedWriter newBufferedWriter(@NotNull Path path,@NotNull Charset charset, @NotNull OpenOption... options) throws IOException {
         return Files.newBufferedWriter(path, charset, options);
     }
 

@@ -173,7 +173,7 @@ public class Task<V> {
      * @param handler The handler called when the task gets cancelled
      * @return The task
      */
-    public Task<V> onCancel(Consumer<Task<V>> handler) {
+    public Task<V> onCancel(@NotNull Consumer<Task<V>> handler) {
         return addListener(new TaskListener<>() {
             @Override
             public void onCancel(@NotNull Task<V> task) {
@@ -188,7 +188,7 @@ public class Task<V> {
      * @param handler The handler called when the task throws an exception
      * @return The task
      */
-    public Task<V> onException(BiConsumer<Task<V>, Throwable> handler) {
+    public Task<V> onException(@NotNull BiConsumer<Task<V>, Throwable> handler) {
         return addListener(new TaskListener<>() {
             @Override
             public void onException(@NotNull Task<V> task, @NotNull Throwable exc) {

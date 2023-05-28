@@ -26,6 +26,8 @@ package me.skulduggerry.utilities.bar;
 
 import net.kyori.adventure.bossbar.BossBar;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -127,6 +129,16 @@ public class BarSettings {
         }
 
         /**
+         * Get the color
+         *
+         * @return The color
+         */
+        @NotNull
+        public BossBar.Color color() {
+            return color;
+        }
+
+        /**
          * Set the color
          *
          * @param color The new color
@@ -135,6 +147,17 @@ public class BarSettings {
         public Builder color(@NotNull BossBar.Color color) {
             this.color = color;
             return this;
+        }
+
+        /**
+         * Get a copy of the flags
+         *
+         * @return The flags
+         */
+        @NotNull
+        @UnmodifiableView
+        public Set<BossBar.Flag> flags() {
+            return new HashSet<>(flags);
         }
 
         /**
@@ -176,15 +199,25 @@ public class BarSettings {
          * @param flags The flags
          * @return The builder.
          */
-        public Builder removeFlags(BossBar.Flag... flags) {
+        public Builder removeFlags(@NotNull BossBar.Flag @NotNull ... flags) {
             Arrays.asList(flags).forEach(this.flags::remove);
             return this;
         }
 
         /**
-         * Set the style
+         * Get the overlay
          *
-         * @param overlay The new style
+         * @return The overlay
+         */
+        @NotNull
+        public BossBar.Overlay getOverlay() {
+            return overlay;
+        }
+
+        /**
+         * Set the overlay
+         *
+         * @param overlay The new overlay
          * @return The builder
          */
         public Builder overlay(@NotNull BossBar.Overlay overlay) {
@@ -197,6 +230,7 @@ public class BarSettings {
          *
          * @return The new settings.
          */
+        @NotNull
         public BarSettings build() {
             return new BarSettings(color, flags, overlay);
         }

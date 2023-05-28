@@ -32,6 +32,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -59,7 +60,7 @@ public interface Config {
      * @return The loaded config.
      */
     @NotNull
-    static Config load(Reader reader, Class<? extends Config> type) {
+    static Config load(@NotNull Reader reader, @NotNull Class<? extends Config> type) {
         try (reader) {
             Constructor<? extends Config> constructor = type.getConstructor(Reader.class);
             constructor.setAccessible(true);
@@ -818,6 +819,7 @@ public interface Config {
      *
      * @return The read only config.
      */
+    @UnmodifiableView
     @NotNull Config readOnly();
 
     /**

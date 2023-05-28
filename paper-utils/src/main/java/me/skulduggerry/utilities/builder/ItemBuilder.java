@@ -24,7 +24,9 @@
 
 package me.skulduggerry.utilities.builder;
 
+import com.destroystokyo.paper.Namespaced;
 import net.kyori.adventure.text.Component;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -318,7 +320,7 @@ public class ItemBuilder<T extends ItemBuilder<T>> {
     }
 
     /**
-     * Sets set of materials what given item can destroy in {@link org.bukkit.GameMode#ADVENTURE}
+     * Sets set of materials what given item can destroy in {@link GameMode#ADVENTURE}
      *
      * @param canDestroy Set of materials
      * @deprecated Minecraft does not limit this to the material enum, Use {@link #setDestroyableKeys(Collection)} as a replacement
@@ -331,36 +333,36 @@ public class ItemBuilder<T extends ItemBuilder<T>> {
     }
 
     /**
-     * Sets set of materials where given item can be placed on in {@link org.bukkit.GameMode#ADVENTURE}
+     * Sets set of materials where given item can be placed on in {@link GameMode#ADVENTURE}
      *
      * @param canPlaceOn Set of materials
      * @deprecated Minecraft does not limit this to the material enum, Use {@link #setPlaceableKeys(Collection)} as a replacement
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public T setCanPlaceOn(Set<org.bukkit.Material> canPlaceOn) {
+    public T setCanPlaceOn(Set<Material> canPlaceOn) {
         meta.setCanPlaceOn(canPlaceOn);
         return (T) this;
     }
 
     /**
-     * Sets the collection of namespaced keys that the item can destroy in {@link org.bukkit.GameMode#ADVENTURE}
+     * Sets the collection of namespaced keys that the item can destroy in {@link GameMode#ADVENTURE}
      *
-     * @param canDestroy Collection of {@link com.destroystokyo.paper.Namespaced}
+     * @param canDestroy Collection of {@link Namespaced}
      */
     @SuppressWarnings("unchecked")
-    public T setDestroyableKeys(@NotNull Collection<com.destroystokyo.paper.Namespaced> canDestroy) {
+    public T setDestroyableKeys(@NotNull Collection<Namespaced> canDestroy) {
         meta.setDestroyableKeys(canDestroy);
         return (T) this;
     }
 
     /**
-     * Sets the set of namespaced keys that the item can be placed on in {@link org.bukkit.GameMode#ADVENTURE}
+     * Sets the set of namespaced keys that the item can be placed on in {@link GameMode#ADVENTURE}
      *
-     * @param canPlaceOn Collection of {@link com.destroystokyo.paper.Namespaced}
+     * @param canPlaceOn Collection of {@link Namespaced}
      */
     @SuppressWarnings("unchecked")
-    public T setPlaceableKeys(@NotNull Collection<com.destroystokyo.paper.Namespaced> canPlaceOn) {
+    public T setPlaceableKeys(@NotNull Collection<Namespaced> canPlaceOn) {
         meta.setPlaceableKeys(canPlaceOn);
         return (T) this;
     }

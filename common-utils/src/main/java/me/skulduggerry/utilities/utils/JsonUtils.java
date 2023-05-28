@@ -75,7 +75,7 @@ public class JsonUtils {
      * @return The unpacked object.
      */
     @Nullable
-    public static Object unpackJson(@NotNull Gson gson, @Nullable JsonElement element, Class<?> type) {
+    public static Object unpackJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull Class<?> type) {
         return gson.fromJson(element, type);
     }
 

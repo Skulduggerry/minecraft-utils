@@ -30,7 +30,7 @@
 
     <groupId>me.skulduggerry</groupId>
     <artifactId>minecraft-utils</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>common-utils</module>
