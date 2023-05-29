@@ -24,6 +24,7 @@
 
 package me.skulduggerry.utilities.config;
 
+import me.skulduggerry.utilities.utils.ReflectionUtils;
 import me.skulduggerry.utilities.version.Version;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,13 +61,7 @@ public interface Config {
      */
     @NotNull
     static Config load(@NotNull Reader reader, @NotNull Class<? extends Config> type) {
-        try (reader) {
-            Constructor<? extends Config> constructor = type.getConstructor(Reader.class);
-            constructor.setAccessible(true);
-            return constructor.newInstance(reader);
-        } catch (ReflectiveOperationException | IOException e) {
-            throw new RuntimeException("The given config does not support the creation via Reader!", e);
-        }
+        return ReflectionUtils.createNewInstance(type, reader).orElseThrow(() -> new RuntimeException("The given config does not support the creation via Reader!"));
     }
 
     /**
