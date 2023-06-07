@@ -63,6 +63,7 @@ public final class SimpleTaskHandleImpl<V> extends AbstractBaseTaskHandle implem
 
     /**
      * create the task handle
+     *
      * @return the task handle
      */
     @NotNull
@@ -78,12 +79,14 @@ public final class SimpleTaskHandleImpl<V> extends AbstractBaseTaskHandle implem
             }
         };
 
+        int delay = Tick.tick().fromDuration(getDelay());
+
         if (isSync()) {
             if (getDelay().isZero()) return Bukkit.getScheduler().runTask(getPlugin(), runnable);
-            return Bukkit.getScheduler().runTaskLater(getPlugin(), runnable, getDelay().get(Tick.tick()));
+            return Bukkit.getScheduler().runTaskLater(getPlugin(), runnable, delay);
         }
         if (getDelay().isZero()) return Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), runnable);
-        return Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), runnable, getDelay().get(Tick.tick()));
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), runnable, delay);
     }
 
     /**
