@@ -102,7 +102,7 @@ public class SkullBuilder extends ItemBuilder<SkullBuilder> {
     public SkullBuilder setTexture(@NotNull String value) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         profile.getProperties().put("textures", new Property("textures", value));
-        Optional<Method> optionalMethod = ReflectionUtils.getMethod("setProfile", GameProfile.class);
+        Optional<Method> optionalMethod = ReflectionUtils.getMethod(GameProfile.class, "setProfile");
 
         if (optionalMethod.isEmpty())
             throw new RuntimeException("Missing method setProfile in GameProfile.class");
