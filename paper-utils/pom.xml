@@ -33,7 +33,6 @@
         <version>0.2.2</version>
     </parent>
 
-    <groupId>org.example</groupId>
     <artifactId>paper-utils</artifactId>
 
     <properties>
