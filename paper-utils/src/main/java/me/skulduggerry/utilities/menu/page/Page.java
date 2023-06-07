@@ -24,6 +24,7 @@
 
 package me.skulduggerry.utilities.menu.page;
 
+import me.skulduggerry.utilities.exception.SlotIndexOutOfBoundsException;
 import me.skulduggerry.utilities.menu.slot.Slot;
 import me.skulduggerry.utilities.template.item.ItemTemplate;
 import me.skulduggerry.utilities.template.title.PageTitleTemplate;
@@ -96,18 +97,20 @@ public interface Page {
 
     /**
      * Updates a single slot.
+     * If index is less 0 or index is more than the size of the page an {@link SlotIndexOutOfBoundsException} will be thrown.
      *
      * @param slot The slot to update.
      */
-    void updateSlot(@Range(from = 0, to = Integer.MAX_VALUE) int slot);
+    void updateSlot(int slot);
 
     /**
      * Updates a single slot for the given player.
+     * If index is less 0 or index is more than the size of the page an {@link SlotIndexOutOfBoundsException} will be thrown.
      *
      * @param slot   The slot to update.
      * @param player The player.
      */
-    void updateSlot(@Range(from = 0, to = Integer.MAX_VALUE) int slot, @Range(from = 0, to = Integer.MAX_VALUE) Player player);
+    void updateSlot(int slot, @NotNull Player player);
 
     /**
      * Updates this page for all players.
@@ -137,22 +140,22 @@ public interface Page {
 
     /**
      * Get the slot at the given index.
-     * If index is less 0 or index is more than the size of the page an {@link ArrayIndexOutOfBoundsException} will be thrown.
+     * If index is less 0 or index is more than the size of the page an {@link SlotIndexOutOfBoundsException} will be thrown.
      *
      * @param index The index.
      * @return The slot at the given index.
      */
-    Slot getSlot(@Range(from = 0, to = Integer.MAX_VALUE) int index);
+    Slot getSlot(int index);
 
     /**
      * Get the slot at the given row and column.
-     * If the calculated does not exist a {@link ArrayIndexOutOfBoundsException} will be thrown.
+     * If the calculated does not exist a {@link SlotIndexOutOfBoundsException} will be thrown.
      *
      * @param row    The row of the page.
      * @param column The column of the page.
      * @return The slot at the given index.
      */
-    Slot getSlot(@Range(from = 0, to = Integer.MAX_VALUE) int row, @Range(from = 0, to = Integer.MAX_VALUE) int column);
+    Slot getSlot(int row, int column);
 
     /**
      * Removes all items from the page.
@@ -161,18 +164,17 @@ public interface Page {
 
     /**
      * Clears the slot at the given index.
-     * If index is less 0 or index is more than the size of the page an {@link ArrayIndexOutOfBoundsException} will be thrown.
+     * If index is less 0 or index is more than the size of the page an {@link SlotIndexOutOfBoundsException} will be thrown.
      *
      * @param index The index.
      */
-    void clear(@Range(from = 0, to = Integer.MAX_VALUE) int index);
+    void clear(int index);
 
     /**
      * Get the size of the page.
      *
      * @return The size.
      */
-    @Range(from = 0, to = Integer.MAX_VALUE)
     int getSize();
 
     /**
@@ -180,7 +182,6 @@ public interface Page {
      *
      * @return The width.
      */
-    @Range(from = 1, to = Integer.MAX_VALUE)
     int getWidth();
 
     /**
@@ -188,7 +189,6 @@ public interface Page {
      *
      * @return The height.
      */
-    @Range(from = 1, to = Integer.MAX_VALUE)
     int getHeight();
 
     /**

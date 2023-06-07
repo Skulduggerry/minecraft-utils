@@ -24,6 +24,7 @@
 
 package me.skulduggerry.utilities.menu.page;
 
+import me.skulduggerry.utilities.exception.SlotIndexOutOfBoundsException;
 import me.skulduggerry.utilities.menu.slot.Slot;
 import me.skulduggerry.utilities.menu.slot.SlotImpl;
 import me.skulduggerry.utilities.menu.slot.SlotSettings;
@@ -229,12 +230,22 @@ public abstract class AbstractPage implements Page {
     }
 
     /**
+     * Tests if the slot is in bounds
+     *
+     * @param slot The slot
+     */
+    private void testSlotIndex(int slot) {
+        if (0 > slot || slot >= getSize()) throw new SlotIndexOutOfBoundsException(slot);
+    }
+
+    /**
      * Updates a single slot.
      *
      * @param slot The slot to update.
      */
     @Override
-    public void updateSlot(@Range(from = 0, to = Integer.MAX_VALUE) int slot) {
+    public void updateSlot(int slot) {
+        testSlotIndex(slot);
         getViewers().forEach(player -> updateSlot(slot, player));
     }
 
@@ -245,7 +256,9 @@ public abstract class AbstractPage implements Page {
      * @param player The player.
      */
     @Override
-    public void updateSlot(@Range(from = 0, to = Integer.MAX_VALUE) int slot, @NotNull Player player) {
+    public void updateSlot(int slot, @NotNull Player player) {
+        testSlotIndex(slot);
+
         InventoryHolder invHolder = player.getOpenInventory().getTopInventory().getHolder();
         if (!(invHolder instanceof PageHolder holder) || !holders.contains(holder)) return;
         Inventory inventory = invHolder.getInventory();
@@ -318,7 +331,8 @@ public abstract class AbstractPage implements Page {
      * @return The slot at the given index.
      */
     @Override
-    public Slot getSlot(@Range(from = 0, to = Integer.MAX_VALUE) int index) {
+    public Slot getSlot(int index) {
+        testSlotIndex(index);
         return slots[index];
     }
 
@@ -339,7 +353,8 @@ public abstract class AbstractPage implements Page {
      * @param index The index.
      */
     @Override
-    public void clear(@Range(from = 0, to = Integer.MAX_VALUE) int index) {
+    public void clear(int index) {
+        testSlotIndex(index);
         getSlot(index).setSlotSettings(SlotSettings.builder().build());
     }
 
@@ -348,7 +363,6 @@ public abstract class AbstractPage implements Page {
      *
      * @return The size.
      */
-    @Range(from = 1, to = Integer.MAX_VALUE)
     @Override
     public int getSize() {
         return type == null ? getWidth() * getHeight() : type.getDefaultSize();
@@ -360,7 +374,6 @@ public abstract class AbstractPage implements Page {
      * @return The width.
      */
     @Override
-    @Range(from = 1, to = Integer.MAX_VALUE)
     public int getWidth() {
         return width;
     }
@@ -371,7 +384,6 @@ public abstract class AbstractPage implements Page {
      * @return The height.
      */
     @Override
-    @Range(from = 1, to = Integer.MAX_VALUE)
     public int getHeight() {
         return height;
     }
