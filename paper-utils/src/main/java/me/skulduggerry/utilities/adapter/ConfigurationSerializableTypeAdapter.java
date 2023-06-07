@@ -25,6 +25,7 @@
 package me.skulduggerry.utilities.adapter;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.stream.JsonReader;
@@ -54,6 +55,11 @@ public class ConfigurationSerializableTypeAdapter implements JsonAdapter<Configu
      */
     @Override
     public void write(@NotNull Gson gson, @NotNull JsonWriter writer, @Nullable ConfigurationSerializable value) throws IOException {
+        if (value == null) {
+            TypeAdapters.JSON_ELEMENT.write(writer, JsonNull.INSTANCE);
+            return;
+        }
+
         JsonObject result = new JsonObject();
         result.addProperty(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias(value.getClass()));
         JsonUtils.addAllProperties(gson, value.serialize(), result);

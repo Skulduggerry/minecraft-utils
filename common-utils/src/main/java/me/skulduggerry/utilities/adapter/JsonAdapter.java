@@ -52,7 +52,8 @@ public interface JsonAdapter<T> {
      * @return The factory.
      */
     @SuppressWarnings("unchecked")
-    static TypeAdapterFactory getFactory(Class<?> clazz, JsonAdapter<?> adapter) {
+    @NotNull
+    static TypeAdapterFactory getFactory(@NotNull Class<?> clazz, @NotNull JsonAdapter<?> adapter) {
         return new TypeAdapterFactory() {
             @Override
             public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
@@ -67,6 +68,7 @@ public interface JsonAdapter<T> {
      * @param gson   The gson to convert into not out-of-the-box supported class
      * @param writer Output to the config
      * @param value  Value to write
+     * @throws IOException if an I/O error occurs
      */
     void write(@NotNull Gson gson, @NotNull JsonWriter writer, @Nullable T value) throws IOException;
 
@@ -76,9 +78,10 @@ public interface JsonAdapter<T> {
      * @param gson   The gson to convert into not out-of-the-box supported class
      * @param reader The input from the config
      * @return The object
+     * @throws IOException if an I/O error occurs
      */
     @Nullable
-    T read(@NotNull Gson gson, @NotNull JsonReader reader);
+    T read(@NotNull Gson gson, @NotNull JsonReader reader) throws IOException;
 
     /**
      * Converts the adapter to a {@see TypeAdapter}
@@ -86,6 +89,7 @@ public interface JsonAdapter<T> {
      * @param gson The gson to convert into not out-of-the-box supported class
      * @return The adapter
      */
+    @NotNull
     default TypeAdapter<T> getAsTypeAdapter(@NotNull Gson gson) {
         return new TypeAdapter<>() {
             @Override

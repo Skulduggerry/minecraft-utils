@@ -22,44 +22,44 @@
  * SOFTWARE.
  */
 
-package me.skulduggerry.utilities.scheduler;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+package me.skulduggerry.utilities.exception;
 
 /**
- * Listener for actions that might happen to a task.
+ * Thrown to indicate that a slot has been accessed with an illegal index. The
+ * index is either negative or greater than or equal to the size of the maximum
+ * number of slots.
  *
- * @param <V> Type of the result.
- * @author Skulduggerry
- * @since 0.1.0
+ * @since 0.2.1
  */
-public interface TaskListener<V> {
+public class SlotIndexOutOfBoundsException extends IndexOutOfBoundsException {
 
     /**
-     * Called when tha task has finished.
-     *
-     * @param task   Task which completed.
-     * @param result Result the task has produced.
+     * Constructs an {@code SlotIndexOutOfBoundsException} with no detail message.
      */
-    default void onComplete(@NonNull Task<V> task, @Nullable V result) {
+    public SlotIndexOutOfBoundsException() {
     }
 
     /**
-     * Called when someone uses {@link Task#cancel()} while it is running.
+     * Constructs an {@code SlotIndexOutOfBoundsException} with the specified detail
+     * message.
      *
-     * @param task Task which is cancelled.
+     * @param s the detail message
      */
-    default void onCancel(@NonNull Task<V> task) {
+    public SlotIndexOutOfBoundsException(String s) {
+        super(s);
     }
 
     /**
-     * Called when the task produces an exception.
-     * Automatically stops the task.
+     * Constructs a new {@code SlotIndexOutOfBoundsException} class with an
+     * argument indicating the illegal index.
      *
-     * @param task Task which produced the exception.
-     * @param exc  The exception.
+     * <p>The index is included in this exception's detail message.  The
+     * exact presentation format of the detail message is unspecified.
+     *
+     * @param index the illegal index.
+     * @since 9
      */
-    default void onException(@NonNull Task<V> task, @NonNull Throwable exc) {
+    public SlotIndexOutOfBoundsException(int index) {
+        super("Slot index out of range: " + index);
     }
 }

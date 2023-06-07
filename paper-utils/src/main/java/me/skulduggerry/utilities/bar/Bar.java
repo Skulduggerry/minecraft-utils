@@ -28,6 +28,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.util.*;
 
@@ -47,7 +48,7 @@ public abstract class Bar {
      *
      * @param settings Settings for the BossBar
      */
-    protected Bar(BarSettings settings) {
+    protected Bar(@NotNull BarSettings settings) {
         this.settings = settings;
     }
 
@@ -104,6 +105,7 @@ public abstract class Bar {
      *
      * @return The settings
      */
+    @NotNull
     public BarSettings settings() {
         return settings;
     }
@@ -138,7 +140,7 @@ public abstract class Bar {
      * @param bar   The bar.
      * @param title The title.
      */
-    protected void setBarProperties(@NotNull BossBar bar, @NotNull Component title, float progress) {
+    protected void setBarProperties(@NotNull BossBar bar, @NotNull Component title, @Range(from = 0, to = 1) float progress) {
         bar.name(title)
                 .progress(progress)
                 .color(settings.color())
@@ -153,7 +155,7 @@ public abstract class Bar {
      * @param progress The progress
      * @return The new BossBar
      */
-    protected BossBar createBossBar(@NotNull Component title, float progress) {
+    protected BossBar createBossBar(@NotNull Component title, @Range(from = 0, to = 1) float progress) {
         BossBar.Color color = settings.color();
         Set<BossBar.Flag> flags = settings.flags();
         BossBar.Overlay style = settings.overlay();
@@ -183,6 +185,7 @@ public abstract class Bar {
          *
          * @return The settings
          */
+        @NotNull
         public BarSettings settings() {
             return settings;
         }

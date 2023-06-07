@@ -90,7 +90,7 @@ public class PotionBuilder extends ItemBuilder<PotionBuilder> {
      *
      * @param material The material.
      */
-    private static Material checkMaterial(Material material) {
+    private static Material checkMaterial(@NotNull Material material) {
         return switch (material) {
             case POTION, LEGACY_POTION, LINGERING_POTION, LEGACY_LINGERING_POTION, SPLASH_POTION, LEGACY_SPLASH_POTION ->
                     material;

@@ -27,6 +27,8 @@ package me.skulduggerry.utilities.config.wrapper;
 import me.skulduggerry.utilities.config.Config;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Optional;
 
@@ -36,6 +38,7 @@ import java.util.Optional;
  * @author Skulduggerry
  * @since 0.1.0
  */
+@UnmodifiableView
 public class ReadOnlyWrapper extends ConfigWrapper {
 
     private ReadOnlyWrapper(@NotNull Config wrapped) {
@@ -43,6 +46,7 @@ public class ReadOnlyWrapper extends ConfigWrapper {
     }
 
     @NotNull
+    @UnmodifiableView
     public static Config asReadOnlyConfig(@NotNull Config config) {
         return config.isReadOnly() ? config : new ReadOnlyWrapper(config);
     }

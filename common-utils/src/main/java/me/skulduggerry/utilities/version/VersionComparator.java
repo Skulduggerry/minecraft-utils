@@ -89,7 +89,7 @@ public class VersionComparator implements Comparator<Version> {
      * imposes orderings that are inconsistent with equals."
      */
     @Override
-    public int compare(Version v1, Version v2) {
+    public int compare(@NotNull Version v1, @NotNull Version v2) {
         return v1.compareTo(v2);
     }
 }

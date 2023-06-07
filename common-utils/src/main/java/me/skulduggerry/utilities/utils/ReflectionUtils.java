@@ -25,6 +25,7 @@
 package me.skulduggerry.utilities.utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
@@ -57,7 +58,7 @@ public class ReflectionUtils {
      * @return The list of fields.
      */
     @NotNull
-    public static List<Field> getFields(@NotNull Class<?> type) {
+    public static List<Field> getAllFields(@NotNull Class<?> type) {
         List<Field> result = new LinkedList<>();
         result.addAll(Arrays.asList(type.getFields()));
         result.addAll(Arrays.asList(type.getDeclaredFields()));
@@ -65,12 +66,35 @@ public class ReflectionUtils {
     }
 
     /**
-     * Tries to find a public field in the class hierarchy or a not-public field in the class which matches the given name.
+     * Get all public fields in the class hierarchy.
+     *
+     * @param type The class.
+     * @return The list of fields.
+     */
+    @NotNull
+    public static List<Field> getPublicFields(@NotNull Class<?> type) {
+        return Arrays.asList(type.getFields());
+    }
+
+    /**
+     * Gets all fields declared in this class.
+     *
+     * @param type The class.
+     * @return The list of fields.
+     */
+    @NotNull
+    public static List<Field> getDeclaredFields(@NotNull Class<?> type) {
+        return Arrays.asList(type.getDeclaredFields());
+    }
+
+    /**
+     * Tries to find a public field in the class hierarchy or a not-public field declared in this class which matches the given name.
      *
      * @param name The name of the field.
      * @param type The class.
      * @return The field wrapped in an optional
      */
+    @NotNull
     public static Optional<Field> getField(@NotNull String name, @NotNull Class<?> type) {
         try {
             return Optional.of(type.getField(name));
@@ -84,19 +108,47 @@ public class ReflectionUtils {
     }
 
     /**
+     * Tries to get the value out of a field and convert it to the given target type.
+     *
+     * @param instance    The instance to get the value from (null when the field is static)
+     * @param field       The field
+     * @param targetClass The target class.
+     * @param <T>         The target type of the field.
+     * @return The value wrapped into an optional
+     */
+    public static <T> Optional<T> getFieldValue(@Nullable Object instance, @NotNull Field field, @NotNull Class<T> targetClass) {
+        try {
+            Object value = field.get(instance);
+            T result = targetClass.cast(value);
+            return Optional.of(result);
+        } catch (IllegalAccessException | ClassCastException e) {/*Ignored*/}
+        return Optional.empty();
+    }
+
+    /**
      * Get all constructors of this type.
      *
      * @param type The class.
      * @param <T>  The type of the class.
      * @return The list of constructors.
      */
+    @NotNull
     @SuppressWarnings("unchecked")
-    public static <T> List<Constructor<T>> getConstructors(@NotNull Class<T> type) {
-        return new LinkedList<>(
-                Arrays.asList(
-                        (Constructor<T>[]) type.getDeclaredConstructors()
-                )
-        );
+    public static <T> List<Constructor<T>> getAllConstructors(@NotNull Class<T> type) {
+        return Arrays.asList((Constructor<T>[]) type.getDeclaredConstructors());
+    }
+
+    /**
+     * Get all public constructors for this class.
+     *
+     * @param type The class.
+     * @param <T>  The type.
+     * @return The list of constructors
+     */
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public static <T> List<Constructor<T>> getPublicConstructors(@NotNull Class<T> type) {
+        return Arrays.asList((Constructor<T>[]) type.getConstructors());
     }
 
     /**
@@ -144,10 +196,10 @@ public class ReflectionUtils {
      * Get all public methods in the class hierarchy and all not-public methods declared in this class.
      *
      * @param type The class.
-     * @return The list of fields.
+     * @return The list of methods.
      */
     @NotNull
-    public static List<Method> getMethods(@NotNull Class<?> type) {
+    public static List<Method> getAllMethods(@NotNull Class<?> type) {
         List<Method> result = new LinkedList<>();
         result.addAll(Arrays.asList(type.getMethods()));
         result.addAll(Arrays.asList(type.getDeclaredMethods()));
@@ -155,18 +207,24 @@ public class ReflectionUtils {
     }
 
     /**
-     * Tries to find a public method in the class hierarchy or a not-public method declared in the given class which matches the given name and parameters.
+     * Get all public methods in the class hierarchie.
      *
-     * @param name       The name of the method.
-     * @param instance   The instance to search for the method on.
-     * @param parameters Instances of the parameters of the method.
-     * @return The method wrapped in an optional
+     * @param type The class.
+     * @return The list of public methods.
      */
     @NotNull
-    public static Optional<Method> getMethod(@NotNull String name, @NotNull Object instance, @NotNull Object @NotNull ... parameters) {
-        Class<?> type = instance.getClass();
-        Class<?>[] parameterTypes = getClasses(parameters);
-        return getMethod(name, type, parameterTypes);
+    public static List<Method> getPublicMethods(@NotNull Class<?> type) {
+        return Arrays.asList(type.getMethods());
+    }
+
+    /**
+     * Get all methods declared in this class.
+     *
+     * @param type The class.
+     * @return The list of methods.
+     */
+    public static List<Method> getDeclaredMethods(@NotNull Class<?> type) {
+        return Arrays.asList(type.getDeclaredMethods());
     }
 
     /**
@@ -178,7 +236,7 @@ public class ReflectionUtils {
      * @return The method wrapped in an optional
      */
     @NotNull
-    public static Optional<Method> getMethod(@NotNull String name, @NotNull Class<?> type, @NotNull Class<?> @NotNull ... parameters) {
+    public static Optional<Method> getMethod(@NotNull Class<?> type, @NotNull String name, @NotNull Class<?> @NotNull ... parameters) {
         try {
             return Optional.of(type.getMethod(name, parameters));
         } catch (NoSuchMethodException ignored) {/**/}
@@ -200,8 +258,42 @@ public class ReflectionUtils {
         return executable.getParameters().length != 0;
     }
 
-    public static boolean matchingParameters(@NotNull Executable executable, @NotNull Class<?> @NotNull ... expectedParameters) {
+    /**
+     * Checks if the executable can be called with the given parameters.
+     *
+     * @param executable       The executable to check
+     * @param callerParameters The parameter types.
+     * @return The result of the check.
+     */
+    public static boolean matchingParameters(@NotNull Executable executable, @NotNull Class<?> @NotNull ... callerParameters) {
+        Class<?>[] parameterTypes = executable.getParameterTypes();
+        if (parameterTypes.length != callerParameters.length) return false;
+        for (int i = 0; i < callerParameters.length; ++i) {
+            if (!parameterTypes[i].isAssignableFrom(callerParameters[i])) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the parameter types are exactly the same as the expected
+     *
+     * @param executable         The executable
+     * @param expectedParameters The expected parameters
+     * @return The result of the check.
+     */
+    public static boolean matchingParametersExact(@NotNull Executable executable, @NotNull Class<?> @NotNull ... expectedParameters) {
         return Arrays.equals(executable.getParameterTypes(), expectedParameters);
+    }
+
+    /**
+     * Checks if the return type of the given method is the same as the expected one.
+     *
+     * @param method             The method to check
+     * @param expectedReturnType The expected return type.
+     * @return The result of the check.
+     */
+    public static boolean matchingReturnType(@NotNull Method method, @NotNull Class<?> expectedReturnType) {
+        return method.getReturnType().equals(expectedReturnType);
     }
 
     /**
@@ -217,7 +309,7 @@ public class ReflectionUtils {
      * @return true if an annotation for the specified annotation type is present on this element, else false
      * @throws NullPointerException if the given annotation class is null
      */
-    public static boolean hasAnnotation(@NotNull AnnotatedElement element, Class<? extends Annotation> annotationType) {
+    public static boolean hasAnnotation(@NotNull AnnotatedElement element, @NotNull Class<? extends Annotation> annotationType) {
         return element.isAnnotationPresent(annotationType);
     }
 
@@ -285,5 +377,9 @@ public class ReflectionUtils {
         return Arrays.stream(args)
                 .map(Object::getClass)
                 .toArray(Class[]::new);
+    }
+
+    public static boolean isStatic(@NotNull Method method) {
+        return Modifier.isStatic(method.getModifiers());
     }
 }
