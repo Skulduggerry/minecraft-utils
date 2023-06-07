@@ -276,11 +276,12 @@ public class ReflectionUtils {
 
     /**
      * Checks if the parameter types are exactly the same as the expected
-     * @param executable The executable
+     *
+     * @param executable         The executable
      * @param expectedParameters The expected parameters
      * @return The result of the check.
      */
-    public static boolean matchingParametersExact(@NotNull Executable executable, @NotNull Class<?> @NotNull... expectedParameters) {
+    public static boolean matchingParametersExact(@NotNull Executable executable, @NotNull Class<?> @NotNull ... expectedParameters) {
         return Arrays.equals(executable.getParameterTypes(), expectedParameters);
     }
 
@@ -376,5 +377,9 @@ public class ReflectionUtils {
         return Arrays.stream(args)
                 .map(Object::getClass)
                 .toArray(Class[]::new);
+    }
+
+    public static boolean isStatic(@NotNull Method method) {
+        return Modifier.isStatic(method.getModifiers());
     }
 }

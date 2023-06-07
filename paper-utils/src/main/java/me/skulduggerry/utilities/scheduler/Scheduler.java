@@ -24,16 +24,21 @@
 
 package me.skulduggerry.utilities.scheduler;
 
+import io.papermc.paper.util.Tick;
+import me.skulduggerry.utilities.collection.Pair;
+import me.skulduggerry.utilities.scheduler.implementation.RepeatingTaskHandleImpl;
+import me.skulduggerry.utilities.scheduler.implementation.SimpleTaskHandleImpl;
 import me.skulduggerry.utilities.utils.ReflectionUtils;
-import org.bukkit.Bukkit;
+import me.skulduggerry.utilities.utils.SchedulerUtils;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.Callable;
+
 
 /**
  * Scheduler for repeating tasks.
@@ -45,215 +50,219 @@ import java.util.*;
 public class Scheduler {
     private static final Map<Plugin, Scheduler> instances = new HashMap<>();
 
-    /**
-     * Get an instance of the scheduler for the given plugin
-     *
-     * @param plugin plugin to get the scheduler for
-     * @return the scheduler
-     */
     public static Scheduler getInstance(@NotNull Plugin plugin) {
         return instances.computeIfAbsent(plugin, Scheduler::new);
     }
 
     private final Plugin plugin;
-    private final Map<Object, Map<String, BukkitTask>> currentTasks;
+    private final Map<Pair<Object, String>, RepeatingTaskHandle> registeredTasks;
+    private boolean doesFullUnregister;
 
     /**
-     * Constructor.
+     * Constructor
      *
-     * @param plugin plugin to execute tasks
+     * @param plugin The plugin the scheduler is working for.
      */
     private Scheduler(@NotNull Plugin plugin) {
         this.plugin = plugin;
-        currentTasks = new IdentityHashMap<>();
+        registeredTasks = new HashMap<>();
+        doesFullUnregister = false;
     }
 
     /**
-     * schedules all methods in the object annotated with {@link RepeatingTask}
+     * Schedules all methods in the object annotated with {@link RepeatingTaskHandle.RepeatingTask} that fit
+     * the requirements.
      *
      * @param instance object to schedule
      */
     public void registerFull(@NotNull Object instance) {
-        Arrays.stream(instance.getClass().getDeclaredMethods())
-                .filter(method -> ReflectionUtils.hasAnnotation(method, RepeatingTask.class))
+        ReflectionUtils.getDeclaredMethods(instance.getClass())
+                .stream()
+                .filter(method -> ReflectionUtils.hasAnnotation(method, RepeatingTaskHandle.RepeatingTask.class))
                 .forEach(method -> registerMethod(instance, method));
     }
 
     /**
-     * register only one method in the object to schedule
+     * Register the method with the given name to be called on the given object to be scheduled.
+     * The method must fulfill all requirements described in {@link RepeatingTaskHandle.RepeatingTask} to be registered.
      *
      * @param instance   the instance
      * @param methodName the name of the method
      */
-    public void registerMethod(@NotNull Object instance, String methodName) {
-        Optional<Method> optionalMethod = ReflectionUtils.getMethod(methodName, instance);
+    public void registerMethod(@NotNull Object instance, @NotNull String methodName) {
+        Optional<Method> optionalMethod = ReflectionUtils.getMethod(instance.getClass(), methodName);
+
+        //check if the method exists
         if (optionalMethod.isEmpty()) {
-            plugin.getLogger().severe(() -> "Method method %s in class %s not found".formatted(methodName, instance.getClass().getName()));
+            plugin.getLogger().warning(() -> "Cannot register method '%s' because the method in the class '%s' does not exist or has the not the correct signature!".formatted(methodName, instance.getClass().getName()));
             return;
         }
 
-        Method method = optionalMethod.get();
-        if (!ReflectionUtils.hasAnnotation(method, RepeatingTask.class)) {
-            plugin.getLogger().severe(() -> "Methods which should be executed by the scheduler must have the @RepeatingTask-annotation");
-            return;
-        }
-
-        registerMethod(instance, method);
+        registerMethod(instance, optionalMethod.get());
     }
 
     /**
-     * Register the method and start scheduling
+     * Register a method to schedule.
+     * The method must fulfill all requirements described in {@link RepeatingTaskHandle.RepeatingTask} to be registered.
      *
-     * @param instance the instance which executes the method
-     * @param method   the method to schedule
+     * @param instance The instance to call the method on.
+     * @param method   The method.
      */
-    private void registerMethod(@NotNull Object instance, Method method) {
-        if (currentTasks.containsKey(instance) && currentTasks.get(instance).containsKey(method.getName())) return;
+    private void registerMethod(@NotNull Object instance, @NotNull Method method) {
+        Pair<Object, String> bindingInformation = Pair.makePair(instance, method.getName());
 
-        if (ReflectionUtils.hasParameters(method)) {
-            plugin.getLogger().severe(() -> "Methods which should be executed by the scheduler must not have parameters");
+        //check if the method is already registered on this object
+        if (registeredTasks.containsKey(bindingInformation)) {
+            plugin.getLogger().info(() -> "The method '%s' is already registered on the object '%s'".formatted(method.getName(), instance));
             return;
         }
 
-        if (Modifier.isStatic(method.getModifiers())) {
-            plugin.getLogger().severe(() -> "Methods which should be executed by the scheduler must not be static");
+        //checks if the requirements are fulfilled
+        if (!SchedulerUtils.isRepeatingTask(method)) {
+            plugin.getLogger().warning(() -> "Cannot register method '%s' from class '%s' because it does not fulfill all requirements.".formatted(method.getName(), instance.getClass().getName()));
             return;
         }
 
+        RepeatingTaskHandle.RepeatingTask taskInformation = ReflectionUtils.getAnnotation(method, RepeatingTaskHandle.RepeatingTask.class).orElseThrow(() -> new Error("Missing annotation @RepeatingTask event though it was present before"));
+
+        //makes the Method to a MethodHandle
         Optional<MethodHandle> optionalMethodHandle = ReflectionUtils.toHandle(method);
         if (optionalMethodHandle.isEmpty()) {
-            plugin.getLogger().severe(() -> "Unexpectedly method is not able to be converted into a method handle!");
+            plugin.getLogger().severe(() -> "Error while trying to convert the method '%s' from class '%s' to a MethodHandle");
             return;
         }
-
-        RepeatingTask taskInformation = method.getAnnotation(RepeatingTask.class);
         MethodHandle methodHandle = optionalMethodHandle.get();
 
-        List<MethodHandle> exceptionListeners = getExceptionHandlers(taskInformation);
-
-        Runnable task = () -> {
+        //get all information
+        String id = taskInformation.id();
+        boolean sync = taskInformation.sync();
+        Duration delay = Tick.of(taskInformation.delay());
+        Duration period = Tick.of(taskInformation.period());
+        ExceptionalRunnable runnable = () -> {
             try {
                 methodHandle.invoke(instance);
-            } catch (Throwable exc) {
-                TaskHandle handle = new TaskHandle(this, instance, method.getName());
-                exceptionListeners.forEach(listener -> {
-                    try {
-                        listener.invoke(handle, exc);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
+            } catch (Exception e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new Exception(e);
             }
         };
 
-        boolean sync = taskInformation.sync();
-        long delay = taskInformation.delay();
-        long period = taskInformation.period();
+        //register the task
+        RepeatingTaskHandle taskHandle = register(id, sync, delay, period, runnable);
+        SchedulerUtils.getListeners(taskInformation).forEach(taskHandle::addListener);
 
-        BukkitTask handle;
-        if (sync) handle = Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
-        else handle = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, task, delay, period);
-
-        currentTasks.computeIfAbsent(instance, __ -> new HashMap<>()).put(method.getName(), handle);
+        //add it to the map of tasks
+        registeredTasks.put(bindingInformation, taskHandle);
     }
 
     /**
-     * get all handlers for exceptions
-     *
-     * @param repeatingTask information about the task
-     * @return list of methods which react on exceptions
-     */
-    private List<MethodHandle> getExceptionHandlers(RepeatingTask repeatingTask) {
-        return Arrays.stream(repeatingTask.listeners())
-                .map(ReflectionUtils::getMethods)
-                .flatMap(List::stream)
-                .filter(method -> ReflectionUtils.hasAnnotation(method, ExceptionListener.class))
-                .filter(method -> Modifier.isStatic(method.getModifiers()))
-                .filter(method -> ReflectionUtils.matchingParameters(method, TaskHandle.class, Throwable.class))
-                .map(ReflectionUtils::toHandle)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-    }
-
-    /**
-     * Removes and stops all running tasks
+     * cancels all tasks and remove the plugin from the collection of schedulers.
+     * should only be called when the plugin shuts down
      */
     public void unregisterPlugin() {
-        currentTasks.entrySet().stream()
-                .flatMap(objectMapEntry -> objectMapEntry.getValue().values().stream())
-                .forEach(BukkitTask::cancel);
-        currentTasks.clear();
+        unregisterAll();
+        instances.remove(plugin);
     }
 
     /**
-     * Unregisters all methods registered from the given object.
+     * unregisters all tasks
+     */
+    public void unregisterAll() {
+        if (doesFullUnregister) return;
+
+        doesFullUnregister = true;
+        registeredTasks.values().forEach(RepeatingTaskHandle::cancel);
+        doesFullUnregister = false;
+        registeredTasks.clear();
+    }
+
+    /**
+     * unregisters all tasks that are registered to the given object
      *
-     * @param instance The instance
+     * @param instance the object
      */
     public void unregisterFull(@NotNull Object instance) {
-        if (!currentTasks.containsKey(instance)) return;
-        currentTasks.remove(instance).forEach((methodName, taskHandle) -> taskHandle.cancel());
+        if (doesFullUnregister) return;
+
+        doesFullUnregister = true;
+        List<String> methods = new LinkedList<>();
+        registeredTasks.entrySet().stream()
+                .filter(entry -> entry.getKey().first.equals(instance))
+                .forEach(entry -> {
+                    entry.getValue().cancel();
+                    methods.add(entry.getKey().second);
+                });
+        doesFullUnregister = false;
+        methods.forEach(s -> registeredTasks.remove(Pair.makePair(instance, s)));
     }
 
     /**
-     * Unregisters the method with the given name that is called on the object.
+     * unregister a method called on the given object
      *
-     * @param instance   The instance
-     * @param methodName The method.
+     * @param instance The object
+     * @param method   the method name
      */
-    public void unregister(@NotNull Object instance, String methodName) {
-        if (!currentTasks.containsKey(instance)) return;
-        if (!currentTasks.get(instance).containsKey(methodName)) return;
-        currentTasks.get(instance).remove(methodName).cancel();
+    public void unregisterMethod(@NotNull Object instance, @NotNull String method) {
+        if (doesFullUnregister) return;
+
+        Pair<Object, String> bindingInformation = Pair.makePair(instance, method);
+        RepeatingTaskHandle taskHandle = registeredTasks.get(bindingInformation);
+        if (taskHandle != null) {
+            taskHandle.cancel();
+            registeredTasks.remove(bindingInformation);
+        }
     }
 
     /**
-     * handle for tasks so listeners can e.g. cancel a task when it throws an exception
+     * registers a repeating task
      *
-     * @author Skulduggerry
-     * @since 0.1.0
+     * @param id     the id of the task
+     * @param period the duration between two executions
+     * @param task   the task
+     * @return the task handle
      */
-    public static class TaskHandle {
-        private final Scheduler scheduler;
-        private final Object instance;
-        private final String methodName;
-        private boolean cancelled = false;
+    public RepeatingTaskHandle register(@NotNull String id, @NotNull Duration period, @NotNull ExceptionalRunnable task) {
+        return new RepeatingTaskHandleImpl(plugin, id, true, Duration.ZERO, period, task);
+    }
 
-        /**
-         * Constructor
-         *
-         * @param scheduler  Scheduler which executes the task
-         * @param instance   instance which executes the task
-         * @param methodName name of the executed method
-         */
-        private TaskHandle(Scheduler scheduler, Object instance, String methodName) {
-            this.scheduler = scheduler;
-            this.instance = instance;
-            this.methodName = methodName;
-        }
+    /**
+     * registers a repeating task
+     *
+     * @param id     the id of the task
+     * @param sync   is it running synchronously
+     * @param delay  the delay before first execute
+     * @param period the duration between two executions
+     * @param task   the task
+     * @return the task handle
+     */
+    public RepeatingTaskHandle register(@NotNull String id, boolean sync, @NotNull Duration delay, @NotNull Duration period, @NotNull ExceptionalRunnable task) {
+        return new RepeatingTaskHandleImpl(plugin, id, sync, delay, period, task);
+    }
 
-        /**
-         * @return the instance which executes the method
-         */
-        public Object getInstance() {
-            return instance;
-        }
+    /**
+     * registers a task
+     *
+     * @param id   the id of the task
+     * @param task the task
+     * @param <V>  the result type
+     * @return the task handle
+     */
+    public <V> SimpleTaskHandle<V> call(@NotNull String id, @NotNull Callable<V> task) {
+        return new SimpleTaskHandleImpl<>(plugin, id, true, Duration.ZERO, task);
+    }
 
-        /**
-         * @return name of the executed method
-         */
-        public String getMethodName() {
-            return methodName;
-        }
-
-        /**
-         * cancel the task
-         */
-        public void cancel() {
-            if (cancelled) return;
-            scheduler.unregister(instance, methodName);
-            cancelled = true;
-        }
+    /**
+     * registers a task
+     *
+     * @param id    the id of the task
+     * @param sync  is it running synchronously
+     * @param delay the delay before first execute
+     * @param task  the task
+     * @param <V>   the result type
+     * @return the task handle
+     */
+    public <V> SimpleTaskHandle<V> call(@NotNull String id, boolean sync, @NotNull Duration delay, @NotNull Callable<V> task) {
+        return new SimpleTaskHandleImpl<>(plugin, id, sync, delay, task);
     }
 }

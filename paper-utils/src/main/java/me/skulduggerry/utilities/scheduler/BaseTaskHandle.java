@@ -24,45 +24,68 @@
 
 package me.skulduggerry.utilities.scheduler;
 
-import org.jetbrains.annotations.Range;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.time.Duration;
 
 /**
- * Allows to execute the annotated method with a {@link Scheduler}.
- * Annotated methods must have no parameters and must not be static.
+ * Interface for task handle
  *
  * @author Skulduggerry
- * @since 0.1.0
+ * @since 0.2.1
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RepeatingTask {
+public interface BaseTaskHandle {
 
     /**
-     * @return Whether the task should be executed sync or async
-     */
-    boolean sync() default true;
-
-    /**
-     * @return the delay before the first execution
-     */
-    @Range(from = 0, to = Long.MAX_VALUE)
-    long delay() default 0;
-
-    /**
-     * @return the period between two executions
-     */
-    @Range(from = 1, to = Long.MAX_VALUE)
-    long period() default 20;
-
-    /**
-     * put in all classes which have a static method marked with {@link ExceptionListener} to handle exceptions
+     * get the plugin that owns this task
      *
-     * @return listener classes
+     * @return the plugin
      */
-    Class<?>[] listeners() default {};
+    @NotNull
+    Plugin getPlugin();
+
+    /**
+     * get the id of the task
+     *
+     * @return the id
+     */
+    @NotNull
+    String getId();
+
+    /**
+     * is the task running synchronously
+     *
+     * @return is sync
+     */
+    boolean isSync();
+
+    /**
+     * get the delay before first execution
+     *
+     * @return the delay
+     */
+    @NotNull
+    Duration getDelay();
+
+    /**
+     * is the task cancelled
+     *
+     * @return cancelled
+     */
+    boolean isCancelled();
+
+    /**
+     * cancel the task
+     */
+    void cancel();
+
+    /**
+     * get the last exception
+     *
+     * @return the last exception
+     */
+    @Nullable
+    Exception getLastException();
 }
