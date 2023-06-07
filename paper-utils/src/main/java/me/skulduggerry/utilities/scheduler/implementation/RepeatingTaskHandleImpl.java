@@ -82,9 +82,12 @@ public final class RepeatingTaskHandleImpl extends AbstractBaseTaskHandle implem
             }
         };
 
+        int delay = Tick.tick().fromDuration(getDelay());
+        int period = Tick.tick().fromDuration(getPeriod());
+
         if (isSync())
-            return Bukkit.getScheduler().runTaskTimer(getPlugin(), runnable, getDelay().get(Tick.tick()), period.get(Tick.tick()));
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), runnable, getDelay().get(Tick.tick()), period.get(Tick.tick()));
+            return Bukkit.getScheduler().runTaskTimer(getPlugin(), runnable, delay, period);
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), runnable, delay, period);
     }
 
     /**
