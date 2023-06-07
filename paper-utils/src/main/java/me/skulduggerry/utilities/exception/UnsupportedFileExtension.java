@@ -45,9 +45,9 @@ public class UnsupportedFileExtension extends IllegalArgumentException {
     /**
      * Constructor.
      *
-     * @param s Given message
+     * @param fileExtension the file extension
      */
-    public UnsupportedFileExtension(String s) {
-        super(s);
+    public UnsupportedFileExtension(String fileExtension) {
+        super("File extension .%s is not supported!".formatted(fileExtension));
     }
 }

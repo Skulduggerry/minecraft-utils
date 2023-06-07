@@ -42,9 +42,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Implementation of the {@link ConfigManager} interface.
@@ -118,7 +115,7 @@ public class SimpleConfigManager implements ConfigManager {
         return switch (fileExtension) {
             case "json" -> JsonConfig.class;
             case "yml", "yaml" -> YamlConfig.class;
-            default -> throw new UnsupportedFileExtension("File extension ." + fileExtension + " is not supported!");
+            default -> throw new UnsupportedFileExtension(fileExtension);
         };
     }
 

@@ -24,6 +24,7 @@
 
 package me.skulduggerry.utilities.utils;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -152,7 +153,7 @@ public final class FileUtils {
      *                                       <i>(optional specific exception)</i>
      * @see Files#write(Path, Iterable, Charset, OpenOption[])
      */
-    public static BufferedWriter newBufferedWriter(@NotNull Path path,@NotNull Charset charset, @NotNull OpenOption... options) throws IOException {
+    public static BufferedWriter newBufferedWriter(@NotNull Path path, @NotNull Charset charset, @NotNull OpenOption... options) throws IOException {
         return Files.newBufferedWriter(path, charset, options);
     }
 
@@ -186,6 +187,6 @@ public final class FileUtils {
      */
     @Contract("!null -> !null; null -> null")
     public static String getExtension(String fileName) {
-        return org.apache.commons.io.FilenameUtils.getExtension(fileName);
+        return FilenameUtils.getExtension(fileName);
     }
 }

@@ -30,8 +30,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * Helper class for the scheduler
@@ -56,8 +56,7 @@ public final class SchedulerUtils {
      * @return The collection of listeners.
      */
     public static Collection<RepeatingTaskHandle.TaskListener> getListeners(@NotNull RepeatingTaskHandle.RepeatingTask taskInformation) {
-        int size = taskInformation.cancelHandlers().length + taskInformation.exceptionHandlers().length;
-        Collection<RepeatingTaskHandle.TaskListener> listeners = new ArrayList<>(size);
+        Collection<RepeatingTaskHandle.TaskListener> listeners = new LinkedList<>();
 
         for (Class<?> exceptionHandler : taskInformation.exceptionHandlers()) {
             ReflectionUtils.getDeclaredMethods(exceptionHandler)

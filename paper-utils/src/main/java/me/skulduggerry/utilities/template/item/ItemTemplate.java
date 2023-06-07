@@ -24,6 +24,7 @@
 
 package me.skulduggerry.utilities.template.item;
 
+import me.skulduggerry.utilities.menu.type.MultiPageMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
