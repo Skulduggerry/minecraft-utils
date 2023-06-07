@@ -27,7 +27,7 @@ package me.skulduggerry.utilities.menu.page;
 import me.skulduggerry.utilities.exception.SlotIndexOutOfBoundsException;
 import me.skulduggerry.utilities.menu.slot.Slot;
 import me.skulduggerry.utilities.template.item.ItemTemplate;
-import me.skulduggerry.utilities.template.title.PageTitleTemplate;
+import me.skulduggerry.utilities.template.title.MenuPageTitleTemplate;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -241,12 +241,12 @@ public interface Page {
     interface Builder<T extends Builder<T>> {
 
         /**
-         * Set the {@link PageTitleTemplate}.
+         * Set the {@link MenuPageTitleTemplate}.
          *
-         * @param pageTitleTemplate The new {@link PageTitleTemplate}.
+         * @param titleTemplate The new {@link MenuPageTitleTemplate}.
          * @return The builder.
          */
-        T title(@NotNull PageTitleTemplate pageTitleTemplate);
+        T title(@NotNull MenuPageTitleTemplate titleTemplate);
 
         /**
          * Set a static title for all players.
@@ -257,12 +257,12 @@ public interface Page {
         T title(@NotNull Component title);
 
         /**
-         * Get the {@link PageTitleTemplate} for this builder.
+         * Get the {@link MenuPageTitleTemplate} for this builder.
          *
-         * @return The {@link PageTitleTemplate}.
+         * @return The {@link MenuPageTitleTemplate}.
          */
         @NotNull
-        PageTitleTemplate title();
+        MenuPageTitleTemplate title();
 
         /**
          * Set the {@link CloseHandler} for this builder.
@@ -291,7 +291,7 @@ public interface Page {
         /**
          * Build the page with the given attributes.
          *
-         * @param pageNumber The number of the page (important for the {@link PageTitleTemplate}).
+         * @param pageNumber The number of the page (important for the {@link MenuPageTitleTemplate}).
          * @return The new page.
          */
         Page build(@Range(from = 1, to = Integer.MAX_VALUE) int pageNumber);

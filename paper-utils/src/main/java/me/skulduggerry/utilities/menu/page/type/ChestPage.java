@@ -27,7 +27,7 @@ package me.skulduggerry.utilities.menu.page.type;
 import me.skulduggerry.utilities.menu.page.Page;
 import me.skulduggerry.utilities.menu.slot.Slot;
 import me.skulduggerry.utilities.menu.page.AbstractPage;
-import me.skulduggerry.utilities.template.title.PageTitleTemplate;
+import me.skulduggerry.utilities.template.title.MenuPageTitleTemplate;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,12 +45,12 @@ public class ChestPage extends AbstractPage {
      * Constructor.
      *
      * @param pageNumber   The number of the page.
-     * @param template     The {@link PageTitleTemplate} of the page.
+     * @param template     The {@link MenuPageTitleTemplate} of the page.
      * @param closeHandler The {@link CloseHandler} of the page.
      * @param height       The number height of this page.
      */
     private ChestPage(@Range(from = 1, to = Integer.MAX_VALUE) int pageNumber,
-                      @NotNull PageTitleTemplate template,
+                      @NotNull MenuPageTitleTemplate template,
                       @Nullable CloseHandler closeHandler,
                       @Range(from = 1, to = 6) int height) {
         super(pageNumber, template, closeHandler, 9, height);
@@ -113,7 +113,7 @@ public class ChestPage extends AbstractPage {
         /**
          * Build the page with the given attributes.
          *
-         * @param pageNumber The number of the page (important for the {@link PageTitleTemplate}).
+         * @param pageNumber The number of the page (important for the {@link MenuPageTitleTemplate}).
          * @return The new page.
          */
         @Override

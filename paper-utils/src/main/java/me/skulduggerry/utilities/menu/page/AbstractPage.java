@@ -29,7 +29,7 @@ import me.skulduggerry.utilities.menu.slot.Slot;
 import me.skulduggerry.utilities.menu.slot.SlotImpl;
 import me.skulduggerry.utilities.menu.slot.SlotSettings;
 import me.skulduggerry.utilities.template.item.ItemTemplate;
-import me.skulduggerry.utilities.template.title.PageTitleTemplate;
+import me.skulduggerry.utilities.template.title.MenuPageTitleTemplate;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -52,7 +52,7 @@ import java.util.*;
 public abstract class AbstractPage implements Page {
 
     protected final @Range(from = 1, to = Integer.MAX_VALUE) int pageNumber;
-    protected final @NotNull PageTitleTemplate title;
+    protected final @NotNull MenuPageTitleTemplate title;
     protected final @Range(from = 1, to = Integer.MAX_VALUE) int width;
     protected final @Range(from = 1, to = Integer.MAX_VALUE) int height;
     protected final @Nullable InventoryType type;
@@ -63,12 +63,12 @@ public abstract class AbstractPage implements Page {
     /**
      * Constructor.
      *
-     * @param pageNumber   The number of the page (important for the {@link PageTitleTemplate}).
-     * @param title        The {@link PageTitleTemplate}.
+     * @param pageNumber   The number of the page (important for the {@link MenuPageTitleTemplate}).
+     * @param title        The {@link MenuPageTitleTemplate}.
      * @param closeHandler The {@link Page.CloseHandler}.
      */
     public AbstractPage(@Range(from = 1, to = Integer.MAX_VALUE) int pageNumber,
-                        @NotNull PageTitleTemplate title,
+                        @NotNull MenuPageTitleTemplate title,
                         @Nullable CloseHandler closeHandler,
                         @Range(from = 1, to = Integer.MAX_VALUE) int width,
                         @Range(from = 0, to = Integer.MAX_VALUE) int height) {
@@ -84,13 +84,13 @@ public abstract class AbstractPage implements Page {
     /**
      * Constructor.
      *
-     * @param pageNumber   The number of the page (important for the {@link PageTitleTemplate}).
-     * @param title        The {@link PageTitleTemplate}.
+     * @param pageNumber   The number of the page (important for the {@link MenuPageTitleTemplate}).
+     * @param title        The {@link MenuPageTitleTemplate}.
      * @param closeHandler The {@link Page.CloseHandler}.
      * @param type         The {@link InventoryType} of the page.
      */
     public AbstractPage(@Range(from = 1, to = Integer.MAX_VALUE) int pageNumber,
-                        @NotNull PageTitleTemplate title,
+                        @NotNull MenuPageTitleTemplate title,
                         @Nullable CloseHandler closeHandler,
                         @NotNull InventoryType type) {
         this.pageNumber = pageNumber;
@@ -430,15 +430,15 @@ public abstract class AbstractPage implements Page {
      * @since 0.1.0
      */
     public static abstract class Builder<T extends Builder<T>> implements Page.Builder<T> {
-        private PageTitleTemplate pageTitleTemplate;
+        private MenuPageTitleTemplate titleTemplate;
         private CloseHandler closeHandler;
 
         /**
          * Constructor.
          *
-         * @param template The {@link PageTitleTemplate}.
+         * @param template The {@link MenuPageTitleTemplate}.
          */
-        protected Builder(@NotNull PageTitleTemplate template) {
+        protected Builder(@NotNull MenuPageTitleTemplate template) {
             title(template);
         }
 
@@ -452,15 +452,15 @@ public abstract class AbstractPage implements Page {
         }
 
         /**
-         * Set the {@link PageTitleTemplate}.
+         * Set the {@link MenuPageTitleTemplate}.
          *
-         * @param pageTitleTemplate The new {@link PageTitleTemplate}.
+         * @param titleTemplate The new {@link MenuPageTitleTemplate}.
          * @return The builder.
          */
         @SuppressWarnings("unchecked")
         @Override
-        public T title(@NotNull PageTitleTemplate pageTitleTemplate) {
-            this.pageTitleTemplate = Objects.requireNonNull(pageTitleTemplate);
+        public T title(@NotNull MenuPageTitleTemplate titleTemplate) {
+            this.titleTemplate = Objects.requireNonNull(titleTemplate);
             return (T) this;
         }
 
@@ -476,13 +476,13 @@ public abstract class AbstractPage implements Page {
         }
 
         /**
-         * Get the {@link PageTitleTemplate} for this builder.
+         * Get the {@link MenuPageTitleTemplate} for this builder.
          *
-         * @return The {@link PageTitleTemplate}.
+         * @return The {@link MenuPageTitleTemplate}.
          */
         @NotNull
-        public PageTitleTemplate title() {
-            return pageTitleTemplate;
+        public MenuPageTitleTemplate title() {
+            return titleTemplate;
         }
 
         /**

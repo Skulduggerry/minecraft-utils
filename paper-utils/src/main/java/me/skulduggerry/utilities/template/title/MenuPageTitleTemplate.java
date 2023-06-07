@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Range;
  * @since 0.1.0
  */
 @FunctionalInterface
-public interface PageTitleTemplate {
+public interface MenuPageTitleTemplate {
 
     /**
      * Get a message template which gives the same message for every player and page.
@@ -47,7 +47,7 @@ public interface PageTitleTemplate {
      * @param title The title.
      * @return The template.
      */
-    static PageTitleTemplate of(@NotNull String title) {
+    static MenuPageTitleTemplate of(@NotNull String title) {
         return (receiver, page) -> LegacyComponentSerializer.legacySection().deserialize(title);
     }
 
@@ -57,7 +57,7 @@ public interface PageTitleTemplate {
      * @param title The title.
      * @return The template.
      */
-    static PageTitleTemplate ofNumbered(@NotNull String title) {
+    static MenuPageTitleTemplate ofNumbered(@NotNull String title) {
         return (receiver, page) -> LegacyComponentSerializer.legacySection().deserialize(title)
                 .append(Component.text(" | ").color(NamedTextColor.GRAY))
                 .append(Component.text(page).color(NamedTextColor.BLACK));
