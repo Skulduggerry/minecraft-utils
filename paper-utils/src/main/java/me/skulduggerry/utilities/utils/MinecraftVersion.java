@@ -101,6 +101,11 @@ public class MinecraftVersion {
     public static final Version V_19 = new Version(1, 19, 0);
 
     /**
+     * Minecraft 1.20
+     */
+    public static final Version V_20 = new Version(1, 20, 0);
+
+    /**
      * Compares two versions exact
      */
     public static final Comparator<Version> COMPARATOR_EXACT = Version::compareTo;
