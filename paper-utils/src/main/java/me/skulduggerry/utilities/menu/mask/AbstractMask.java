@@ -27,8 +27,8 @@ package me.skulduggerry.utilities.menu.mask;
 import me.skulduggerry.utilities.menu.page.Page;
 import me.skulduggerry.utilities.menu.slot.SlotSettings;
 import me.skulduggerry.utilities.template.item.ItemTemplate;
-import org.checkerframework.checker.index.qual.Positive;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 /**
  * Abstract class which allows to add items to a page, e.g. like a frame around the page.
@@ -55,7 +55,7 @@ public abstract class AbstractMask implements Mask {
      * @param page The page.
      */
     @Override
-    public void applyMaskOn(@NonNull Page page) {
+    public void applyMaskOn(@NotNull Page page) {
         for (int row = 0; row < items.length && row < page.getHeight(); ++row) {
             for (int column = 0; column < items[row].length && column < page.getWidth(); ++column) {
                 SlotSettings settings = SlotSettings.builder()
@@ -83,7 +83,7 @@ public abstract class AbstractMask implements Mask {
          *
          * @param height The height of the page.
          */
-        protected Builder(@Positive int height) {
+        protected Builder(@Range(from = 1, to = 6) int height) {
             this.items = new ItemTemplate[height][];
         }
 
@@ -154,7 +154,7 @@ public abstract class AbstractMask implements Mask {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public T set( ItemTemplate @NonNull [] items) {
+        public T set(ItemTemplate @NotNull [] items) {
             this.items[rowPointer] = items;
             nextRow();
             return (T) this;
