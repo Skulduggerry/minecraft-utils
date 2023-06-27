@@ -27,9 +27,8 @@ package me.skulduggerry.utilities.template.message;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,17 +45,18 @@ public interface MessageTemplate {
 
     /**
      * Get a message template which gives the same message for every receiver.
-     * Allows color codes with legacy '§'-format.
+     * Allows color codes with the {@link MiniMessage}-format
      *
      * @param message The message.
      * @return The template.
      */
     static MessageTemplate of(@NotNull String message) {
-        return (receiver, args) -> LegacyComponentSerializer.legacySection().deserialize(message);
+        return (receiver, args) -> MiniMessage.miniMessage().deserialize(message);
     }
 
     /**
      * Get the message for the given receiver.
+     * the receiver should not be an {@link ForwardingAudience}.
      *
      * @param receiver Receiver to get the message for
      * @param args     Format arguments.
@@ -166,7 +166,8 @@ public interface MessageTemplate {
     static MessageTemplate withPrefix(@NotNull MessageTemplate prefix, @NotNull MessageTemplate message) {
         return (receiver, args) -> Component.text("[").color(NamedTextColor.GRAY)
                 .append(prefix.getMessage(receiver))
-                .append(Component.text("] ").color(NamedTextColor.GRAY))
+                .append(Component.text("]").color(NamedTextColor.GRAY))
+                .append(Component.space())
                 .append(message.getMessage(receiver, args));
     }
 }
