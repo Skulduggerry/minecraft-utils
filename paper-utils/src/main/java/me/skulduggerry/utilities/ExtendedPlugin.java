@@ -80,6 +80,7 @@ public abstract class ExtendedPlugin extends JavaPlugin {
     @Override
     public final void onEnable() {
         super.onEnable();
+        checkRequirements();
     }
 
     /**
