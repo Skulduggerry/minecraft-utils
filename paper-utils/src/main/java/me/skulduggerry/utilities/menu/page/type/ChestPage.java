@@ -94,7 +94,7 @@ public class ChestPage extends AbstractPage {
          *
          * @param rows The number of rows this builder should have.
          */
-        private Builder(@Range(from = 9, to = 54) int rows) {
+        private Builder(@Range(from = 1, to = 6) int rows) {
             super(InventoryType.CHEST.defaultTitle());
             this.height = rows * 9;
         }
