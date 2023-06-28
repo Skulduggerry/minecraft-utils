@@ -22,23 +22,34 @@
  * SOFTWARE.
  */
 
-package me.skulduggerry.utilities.manager;
+package me.skulduggerry.exception;
+
+import java.util.Locale;
 
 /**
- * Interface that provides basic to manage things
+ * Unchecked exception being thrown when something went wrong with languages.
+ * E.g. it occurs when the required language "en" is not supported by a plugin.
  *
  * @author Skulduggerry
- * @since 0.0.1
+ * @since 1.0.0
  */
-public interface Manager {
+public class MissingLanguageException extends RuntimeException {
 
     /**
-     * Called when the manager gets enabled
+     * Constructor
+     *
+     * @param locale locale which was not loaded
      */
-    void handleEnable();
+    public MissingLanguageException(Locale locale) {
+        super("Language %s is not loaded".formatted(locale));
+    }
 
     /**
-     * called when the manager gets disabled
+     * Constructor
+     *
+     * @param message Message what causes this exception.
      */
-    void handleDisable();
+    public MissingLanguageException(String message) {
+        super(message);
+    }
 }

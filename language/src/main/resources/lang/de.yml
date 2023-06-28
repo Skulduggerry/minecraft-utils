@@ -1,0 +1,14 @@
+flag: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWU3ODk5YjQ4MDY4NTg2OTdlMjgzZjA4NGQ5MTczZmU0ODc4ODY0NTM3NzQ2MjZiMjRiZDhjZmVjYzc3YjNmIn19fQ=="
+
+command:
+  player-command: "<red>Dieser Befehl kann nur von Spielern ausgeführt werden!"
+  language:
+    prefix: "<green>Sprache"
+    changed: "<green>Die Sprache wurde zu <gold>%s <green>geändert."
+    not-found: "<red>Die Sprache wurde nicht gefunden!"
+    help: "<red>Bitte benutze <gold>/sprache (<English|Deutsch|...>)<red>!"
+
+ui:
+  close: "<red>Menu schließen"
+  lang:
+    title: "Wähle deine Sprache aus:"
