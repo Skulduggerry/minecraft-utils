@@ -291,8 +291,8 @@ public abstract class AbstractPage implements Page {
      * Necessary e.g. when the title changes.
      */
     @Override
-    public void recreate() {
-        getViewers().forEach(this::recreate);
+    public void updateFull() {
+        getViewers().forEach(this::updateFull);
     }
 
     /**
@@ -302,7 +302,7 @@ public abstract class AbstractPage implements Page {
      * @param player The player.
      */
     @Override
-    public void recreate(@NotNull Player player) {
+    public void updateFull(@NotNull Player player) {
         InventoryHolder invHolder = player.getOpenInventory().getTopInventory().getHolder();
         if (!(invHolder instanceof PageHolder holder) || !holders.contains(holder)) return;
         Inventory inventory = createInventory(holder);

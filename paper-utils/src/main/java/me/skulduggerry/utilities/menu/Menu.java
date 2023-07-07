@@ -104,7 +104,7 @@ public interface Menu {
      * Recreates the full page for all players.
      * Necessary e.g. when the title changes.
      */
-    void recreate();
+    void updateFull();
 
     /**
      * Recreates the full page for the given player.
@@ -112,7 +112,7 @@ public interface Menu {
      *
      * @param player The player.
      */
-    void recreate(@NotNull Player player);
+    void updateFull(@NotNull Player player);
 
     /**
      * Get the number of pages this menu has.

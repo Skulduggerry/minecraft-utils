@@ -171,13 +171,13 @@ public abstract class AbstractMenu implements Menu {
     }
 
     @Override
-    public void recreate() {
-        pages.forEach(Page::recreate);
+    public void updateFull() {
+        pages.forEach(Page::updateFull);
     }
 
     @Override
-    public void recreate(@NotNull Player player) {
-        pages.forEach(page -> page.recreate(player));
+    public void updateFull(@NotNull Player player) {
+        pages.forEach(page -> page.updateFull(player));
     }
 
     /**

@@ -26,6 +26,7 @@ package me.skulduggerry.utilities.template.title;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +49,7 @@ public interface MenuPageTitleTemplate {
      * @return The template.
      */
     static MenuPageTitleTemplate of(@NotNull String title) {
-        return (receiver, page) -> LegacyComponentSerializer.legacySection().deserialize(title);
+        return (receiver, page) -> MiniMessage.miniMessage().deserialize(title);
     }
 
     /**
@@ -58,7 +59,7 @@ public interface MenuPageTitleTemplate {
      * @return The template.
      */
     static MenuPageTitleTemplate ofNumbered(@NotNull String title) {
-        return (receiver, page) -> LegacyComponentSerializer.legacySection().deserialize(title)
+        return (receiver, page) -> MiniMessage.miniMessage().deserialize(title)
                 .append(Component.text(" | ").color(NamedTextColor.GRAY))
                 .append(Component.text(page).color(NamedTextColor.BLACK));
     }

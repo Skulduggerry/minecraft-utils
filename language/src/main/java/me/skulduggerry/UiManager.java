@@ -99,13 +99,14 @@ public class UiManager implements Manager {
     }
 
     private void applyMenuItems(Menu menu) {
-        Page page = menu.getPages().get(0);
-
         for (Language language : Main.getInstance().getLanguageManager().getAvailableLanguages()) {
             Locale locale = language.getLocale();
             menu.addItem(SlotSettings.builder()
                     .template(ItemTemplate.of(language.getItem()))
-                    .handler(information -> information.player().performCommand("language " + locale.getDisplayLanguage(locale)))
+                    .handler(information -> {
+                        information.player().performCommand("language " + locale.getDisplayLanguage(locale));
+                        menu.updateFull();
+                    })
                     .build()
             );
         }
