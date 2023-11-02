@@ -1,6 +1,0 @@
-name: Language-Plugin
-main: me.skulduggerry.Main
-version: ${project.parent.version}
-api-version: 1.20.1
-author: Skulduggerry
-description: Allows custom messages for every player
