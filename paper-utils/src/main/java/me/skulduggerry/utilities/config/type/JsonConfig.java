@@ -167,7 +167,7 @@ public class JsonConfig extends AbstractConfig {
      * @return element
      */
     private JsonElement getElement(@NotNull String path) {
-        if (path.length() == 0) return config;
+        if (path.isEmpty()) return config;
 
         Queue<String> paths = new LinkedList<>(Arrays.asList(path.split("\\.")));
         JsonElement result = config;
