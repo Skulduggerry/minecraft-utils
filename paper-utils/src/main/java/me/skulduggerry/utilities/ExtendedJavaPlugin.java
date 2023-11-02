@@ -29,6 +29,7 @@ import me.skulduggerry.utilities.config.type.YamlConfig;
 import me.skulduggerry.utilities.manager.config.ConfigManager;
 import me.skulduggerry.utilities.manager.config.type.SimpleConfigManager;
 import me.skulduggerry.utilities.requirements.RequirementsChecker;
+import me.skulduggerry.utilities.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -47,7 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class ExtendedPlugin extends JavaPlugin {
+public abstract class ExtendedJavaPlugin extends JavaPlugin {
 
     private ConfigManager configManager;
     private Config pluginYaml;
@@ -146,8 +147,19 @@ public abstract class ExtendedPlugin extends JavaPlugin {
      */
     public Config getConfigYaml() {
         if (configYaml != null) return configYaml;
-        saveDefaultConfig();
         Path configPath = getDataFolder().toPath().resolve("config.yml");
+        try {
+            saveDefaultConfig();
+        } catch (Exception e) {
+            getLogger().info(() -> "No default config.yml file found.");
+            getLogger().info(() -> "Try creating a new one in the data folder.");
+            try {
+                FileUtils.createFileIfNotExists(configPath);
+            } catch (IOException ex) {
+                getLogger().severe(() -> "Unable to create an empty config.yml file in data folder!");
+                throw new UncheckedIOException("Unable to create an empty config.yml file in data folder!", ex);
+            }
+        }
         return configYaml = getConfig(configPath);
     }
 
