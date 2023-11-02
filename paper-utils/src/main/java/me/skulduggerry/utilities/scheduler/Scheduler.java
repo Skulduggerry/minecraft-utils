@@ -188,10 +188,10 @@ public class Scheduler {
         doesFullUnregister = true;
         List<String> methods = new LinkedList<>();
         registeredTasks.entrySet().stream()
-                .filter(entry -> entry.getKey().first.equals(instance))
+                .filter(entry -> entry.getKey().first().equals(instance))
                 .forEach(entry -> {
                     entry.getValue().cancel();
-                    methods.add(entry.getKey().second);
+                    methods.add(entry.getKey().second());
                 });
         doesFullUnregister = false;
         methods.forEach(s -> registeredTasks.remove(Pair.makePair(instance, s)));
