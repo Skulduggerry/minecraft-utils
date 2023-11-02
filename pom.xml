@@ -35,7 +35,6 @@
     <modules>
         <module>common-utils</module>
         <module>paper-utils</module>
-        <module>language</module>
     </modules>
 
     <properties>
