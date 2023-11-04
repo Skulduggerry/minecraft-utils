@@ -29,7 +29,6 @@ import me.skulduggerry.utilities.config.type.YamlConfig;
 import me.skulduggerry.utilities.manager.config.ConfigManager;
 import me.skulduggerry.utilities.manager.config.type.SimpleConfigManager;
 import me.skulduggerry.utilities.requirements.RequirementsChecker;
-import me.skulduggerry.utilities.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -142,42 +141,52 @@ public abstract class ExtendedJavaPlugin extends JavaPlugin {
 
     /**
      * Get the config.yml file.
+     * Creates the file if it does not exist
      *
      * @return The file as config.
      */
     public Config getConfigYaml() {
         if (configYaml != null) return configYaml;
-        Path configPath = getDataFolder().toPath().resolve("config.yml");
         try {
             saveDefaultConfig();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             getLogger().info(() -> "No default config.yml file found.");
             getLogger().info(() -> "Try creating a new one in the data folder.");
-            try {
-                FileUtils.createFileIfNotExists(configPath);
-            } catch (IOException ex) {
-                getLogger().severe(() -> "Unable to create an empty config.yml file in data folder!");
-                throw new UncheckedIOException("Unable to create an empty config.yml file in data folder!", ex);
-            }
         }
-        return configYaml = getConfig(configPath);
+        return configYaml = getConfig("config.yml");
     }
 
     /**
      * Get the {@link Config} at the given {@link Path}.
      * If the config does not exist, a new file will be created and loaded as config.
-     * If a IO-exception occurs a {@link UncheckedIOException} will be thrown.
+     * If an IO-exception occurs a {@link UncheckedIOException} will be thrown.
      *
-     * @param file The path to the config.
+     * @param resource The path to the config.
      * @return The {@link Config}.
      */
-    public Config getConfig(Path file) {
+    public Config getConfig(String resource) {
         try {
-            return configManager.getConfigFromFile(file);
+            Path path = getDataFolder().toPath().resolve(resource);
+            return configManager.getConfigFromFile(path);
         } catch (IOException e) {
-            getLogger().severe(() -> "Cannot load config at path: %s".formatted(file));
+            getLogger().severe(() -> "Cannot load config at resource: %s".formatted(resource));
             throw new UncheckedIOException(e);
         }
+    }
+
+    /**
+     * Saves an already existing resource in the plugins data folder.
+     * Does not overwrite an existing resource.
+     * If an IO-exception occurs a {@link UncheckedIOException} will be thrown.
+     * If the given resource does not exist an {@link IllegalArgumentException} will be thrown.
+     * Please notice that a
+     *
+     * @param resource The path to the resource
+     * @return The new config.
+     */
+    public Config getDefaultConfig(String resource) {
+        saveResource(resource, false);
+        return getConfig(resource);
     }
 
     /**
