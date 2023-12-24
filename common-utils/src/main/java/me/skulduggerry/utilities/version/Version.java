@@ -132,7 +132,7 @@ public class Version implements Comparable<Version> {
      * that is, for any non-null reference values {@code x} and
      * {@code y}, this method returns {@code true} if and only
      * if {@code x} and {@code y} refer to the same object
-     * ({@code x == y} has the value {@code true}).
+     * ({@code x == y} has the value {@code true})
      * <p>
      * In other words, under the reference equality equivalence
      * relation, each equivalence class only has a single element.
