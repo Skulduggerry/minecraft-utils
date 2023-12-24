@@ -137,7 +137,7 @@ public class Version implements Comparable<Version> {
      * In other words, under the reference equality equivalence
      * relation, each equivalence class only has a single element.
      * @apiNote It is generally necessary to override the {@link Version#hashCode hashCode}
-     * method whenever this method is overridden, so as to maintain the
+     * method whenever this method is overridden, to maintain the
      * general contract for the {@code hashCode} method, which states
      * that equal objects must have equal hash codes.
      * @see #hashCode()
